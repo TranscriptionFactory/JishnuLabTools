@@ -12,7 +12,7 @@ load_data = function(obj, loaded_yaml, remove_mito_ribo = F, create_dir = T) {
     }
   }
 
-  df = JishnuLabTools::check_for_df_or_path(obj)
+  df = JishnuLabTools:::check_for_df_or_path(obj)
 
   if (remove_mito_ribo) {
     df[, -1] = JishnuLabTools::remove_mitochondrial_ribosomal_genes(df[, -1])

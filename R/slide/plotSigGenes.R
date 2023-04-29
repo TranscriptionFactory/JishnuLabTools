@@ -3,15 +3,15 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
                         slide_res = NULL, xdf = NULL, ydf = NULL) {
 
 
-  sdf = JishnuLabTools::check_for_df_or_path(sig_genes)
+  sdf = JishnuLabTools:::check_for_df_or_path(sig_genes)
 
-  er_results = JishnuLabTools::check_for_df_or_path(er_input)
+  er_results = JishnuLabTools:::check_for_df_or_path(er_input)
 
-  slide_results = JishnuLabTools::check_for_df_or_path(slide_res)
+  slide_results = JishnuLabTools:::check_for_df_or_path(slide_res)
 
-  x = JishnuLabTools::check_for_df_or_path(xdf)
+  x = JishnuLabTools:::check_for_df_or_path(xdf)
 
-  y = JishnuLabTools::check_for_df_or_path(ydf)
+  y = JishnuLabTools:::check_for_df_or_path(ydf)
 
   if(any(is.null(c(sdf, x, y)))) {
     cat("Error loading data")

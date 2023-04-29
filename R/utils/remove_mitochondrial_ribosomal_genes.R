@@ -1,4 +1,4 @@
-
+#' @export
 remove_mitochondrial_ribosomal_genes = function(df) {
 
   # check if genes have cluster names e.g C1.RPS prepended
