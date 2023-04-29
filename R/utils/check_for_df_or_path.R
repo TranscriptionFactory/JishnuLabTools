@@ -9,7 +9,7 @@ check_for_df_or_path = function(inputvar) {
       # path passed
       res = tryCatch({
         # try to read as an RDS
-        readRDS(inputvar)
+        as.data.frame(readRDS(inputvar))
       }, error = function(e) {
         # assume its a matrix
         mat = tryCatch({
