@@ -39,8 +39,6 @@ Imports:
     Matrix,
     EssReg,
     SLIDE
-Encoding: UTF-8
-LazyData: true
 Remotes: Hanxi-002/EssReg, jishnu-lab/SLIDE
 Suggests: 
     knitr,
