@@ -1,6 +1,6 @@
 
 #' @export
-smartER = function(yaml_path, all = F) {
+smartER = function(yaml_path, all = F, run_repeats = F) {
 
   ################################################################################
   # load
@@ -126,29 +126,13 @@ smartER = function(yaml_path, all = F) {
   ###############################################################################
 
   # change outpath to put results in pipeline2 directory
+  er_input$out_path = original_path
+  yaml::write_yaml(er_input, new_yaml_path)
 
-  pipeline3_path = paste0(original_path, 'pipeline3/')
-  er_input$k = 5
-  lambdas = c(1.0, 0.1)
-  deltas = c(0.25, 0.1, 0.05, 0.01)
-
-  for (l in lambdas) {
-    for (d in deltas) {
-      er_input$out_path = paste0(original_path, 'pipeline3/delta', d, "_lambda", l, "/")
-      er_input$delta = d
-      er_input$lambda = l
-      yaml::write_yaml(er_input, new_yaml_path)
-
-      cat("running pipeline 3\n")
-
-      EssReg::pipelineER3(new_yaml_path)
-
-      # run slide on these results
-      JishnuLabTools::run_slide(loaded_yaml = er_input)
-
-      JishnuLabTools:::unregister_dopar()
-      doParallel::registerDoParallel(cores)
-    }
+  if (runRepeats) {
+    JishnuLabTools::runER(new_yaml_path, run_repeats = T)
+  } else {
+    JishnuLabTools::runER(new_yaml_path, run_repeats = F)
   }
   cat("Finished successfully\n")
 }
