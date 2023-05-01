@@ -1,5 +1,5 @@
 #' @export
-runER = function(yaml_path, run_repeats = F) {
+runER = function(yaml_path, runRepeats = F) {
 
   er_input = yaml::yaml.load_file(yaml_path)
   original_path = er_input$out_path
