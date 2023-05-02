@@ -49,7 +49,7 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1) {
     return()
   }
 
-  slide_res = SLIDE(z_mat, y_mat, method = 4, do_interacts = F, betas = NULL, top_prop = NULL, marginals = NULL,
+  slide_res = SLIDE::SLIDE(z_mat, y_mat, method = 4, do_interacts = F, betas = NULL, top_prop = NULL, marginals = NULL,
                     spec = spec, fdr = 0.1, niter = 5000, elbow = FALSE, f_size = f_size_val, parallel = T, ncore = cores)
 
   saveRDS(slide_res, paste0(yaml_input$out_path, 'slide_res.RDS'))
