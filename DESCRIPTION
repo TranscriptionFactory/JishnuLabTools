@@ -37,6 +37,7 @@ Imports:
     utils,
     yaml,
     Matrix,
+    optparse,
     EssReg,
     SLIDE
 Remotes: Hanxi-002/EssReg, jishnu-lab/SLIDE
