@@ -1,0 +1,148 @@
+---
+title: "running_ER_on_cluster"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{running_ER_on_cluster}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Vignette from the ER repository
+
+<https://github.com/Hanxi-002/EssReg/blob/main/EssRegVignette_pipeline.pdf>
+
+### Install development version
+
+```{r setup, eval = F}
+library(devtools)
+
+# Note: if you submit an array job that calls this function in quick succession,
+# you'll get rate limited and error out.
+
+# run this to install 
+devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F,
+                         dependencies = T,
+                         auth_token = "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")
+
+library(JishnuLabTools)
+```
+
+### Data format should be saved as a csv or rds file as one of these:
+
+-   Separate X and Y
+
+-   Combined X and Y where Y is the first column
+
+### Get example yaml files
+
+You can edit these files to have the paths to your X and Y data
+
+### Example regression yaml
+
+```{r example_yaml_reg, eval = F}
+
+regression = JishnuLabTools::regression_params
+knitr::kable(data.frame(regression_parameters = unlist(regression)))
+```
+
+### Example classification yaml
+
+```{r example_yaml_class, eval = T}
+
+classification = JishnuLabTools::classification_params
+# knitr::kable(data.frame(classification_parameters = unlist(classification)))
+
+# this is just for printing here
+classification$y_levels = "[0, 1]"
+knitr::kable(data.frame(classification_parameters = unlist(classification)))
+
+```
+
+### Slurm script for single submission (put your email into --mail-user=)
+
+```{r slurm_script, eval = F}
+
+#!/bin/bash
+#SBATCH -t 3-00:00
+#SBATCH --job-name= ER
+#SBATCH --mail-user=
+#SBATCH --mail-type=FAIL
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=150g
+#SBATCH --cpus-per-task=16
+
+module load gcc/10.2.0
+module load r/4.2.0
+
+Rscript runER.R "${SLURM_SUBMIT_DIR}/yaml/pipeline3_RM/LS_onset_RM_incl.yaml" 3
+
+
+```
+
+```{r runER, eval = F}
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+
+library(devtools)
+library(doParallel)
+library(foreach)
+library(tidyverse)
+
+# if need to install
+devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools@master", force = F,
+                         dependencies = T,
+                         auth_token = "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")
+
+library(JishnuLabTools)
+
+
+cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
+if(is.na(cores)) cores <- detectCores()
+# if(!is.na(cores) & cores > 1) cores <- cores
+registerDoParallel(cores)
+cat('number of cores using', cores, '. . .\n')
+
+
+
+```
+
+### Slurm batch submission
+
+You want to point to a folder with yaml files or dataframes (combined X/Y)
+
+```{r slurm_array, eval = F}
+#!/bin/bash
+#SBATCH -t 3-00:00
+#SBATCH --array= numbers
+#SBATCH --job-name= ER
+#SBATCH --mail-user=aar126@pitt.edu
+#SBATCH --mail-type=FAIL
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=150g
+#SBATCH --cpus-per-task=16
+
+
+echo "SLURM_JOBID: " $SLURM_JOBID
+echo "SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
+echo "SLURM_ARRAY_JOB_ID: " $SLURM_ARRAY_JOB_ID
+
+cd /ix/djishnu/Aaron/3_collabs/1_Torok_Jscl_ER/ER_analysis/yaml/pipeline3_RM
+
+arrayfile=`ls | awk -v line=$SLURM_ARRAY_TASK_ID '{if (NR == line) print $0}'`
+
+module load gcc/10.2.0
+module load r/4.2.0
+echo $arrayfile
+# usage: Rscript -d datapath_from_working_dir_including_extension
+Rscript /ix/djishnu/Aaron/3_collabs/1_Torok_Jscl_ER/ER_analysis/runER.R $arrayfile 3 T
+
+```

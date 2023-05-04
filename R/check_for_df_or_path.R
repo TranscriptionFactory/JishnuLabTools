@@ -1,6 +1,25 @@
 # checking input
 check_for_df_or_path = function(inputvar) {
   if ( !is.null(inputvar) ) {
+
+    # check if its a yaml file path
+    if ( typeof(inputvar) == "character" &&
+         stringr::str_detect(stringr::str_to_lower(inputvar), pattern = ".yaml")) {
+
+      # load the yaml
+      yaml_input = yaml::yaml.load_file(inputvar)
+
+      # load the x and y and return as dataframe with y as first column
+      return(cbind.data.frame(y = check_for_df_or_path(yaml_input$y_path)),
+             check_for_df_or_path(yaml_input$x_path))
+    } else if (is.list(inputvar) && all(c("x_path", "y_path") %in% names(inputvar))) {
+      # is it a loaded yaml file
+      # same thing
+      return(cbind.data.frame(y = check_for_df_or_path(yaml_input$y_path)),
+             check_for_df_or_path(yaml_input$x_path))
+    }
+
+
     # check if input is an object or path
     if (is.matrix(inputvar) | is.data.frame(inputvar) | is.list(inputvar)) {
       # object passed

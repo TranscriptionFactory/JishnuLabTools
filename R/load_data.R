@@ -1,7 +1,19 @@
 #' @export
 # load data as a single matrix with first column as Y values
+# obj is either a loaded dataframe (matrix, list, or dataframe) or a path to one
 # out_path is from yaml file
-load_data = function(obj, loaded_yaml, remove_mito_ribo = F, create_dir = T) {
+load_data = function(obj = NULL, yaml, remove_mito_ribo = F, create_dir = T) {
+
+  # did you pass a yaml file
+  if ( typeof(yaml) == "character" &&
+       stringr::str_detect(stringr::str_to_lower(inputvar), pattern = ".yaml")) {
+
+    # load the yaml
+    loaded_yaml = yaml::yaml.load_file(yaml)
+  } else {
+    # passed a yaml file thats already been loaded (e.g. was an RDS)
+    loaded_yaml = yaml
+  }
 
   if (! dir.exists(loaded_yaml$out_path)) {
     if (create_dir) {
@@ -12,7 +24,13 @@ load_data = function(obj, loaded_yaml, remove_mito_ribo = F, create_dir = T) {
     }
   }
 
-  df = JishnuLabTools:::check_for_df_or_path(obj)
+  if ( !is.null(obj)) {
+    # use this parameter if you don't want to deal with editing yaml files
+    df = JishnuLabTools:::check_for_df_or_path(obj)
+  } else {
+    # load data from yaml file
+    df = JishnuLabTools::check_for_df_or_path(yaml)
+  }
 
   if (remove_mito_ribo) {
     df[, -1] = JishnuLabTools::remove_mitochondrial_ribosomal_genes(df[, -1])
@@ -26,11 +44,12 @@ load_data = function(obj, loaded_yaml, remove_mito_ribo = F, create_dir = T) {
     y = as.matrix(df[, 1])
 
     # will just remove columns with zero standard deviation.
-    # to remove based on quantile, set edit_data = T and set quantile
-    cleaned = JishnuLabTools::clean_data(x = x, y = y, edit_data = F,
+    # to remove based on quantile, and set quantile
+    cleaned = JishnuLabTools::clean_data(x = x, y = y, edit_data = T,
                                          quantile_filter = 0, remove_zero_median_cols = F)
 
 
+    # we are going to save these edited data to our output folder
     xpath = paste0(loaded_yaml$out_path, "x.csv")
     ypath = paste0(loaded_yaml$out_path, "y.csv")
     write.csv(cleaned$x, xpath)

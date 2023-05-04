@@ -23,7 +23,7 @@ clean_data <- function(xdata, ydata, edit_data = F,
 
     if (scale_zeroes_directly > 0) {
       x_zeros = which(x == 0)
-      x[x_zeros] = 0.0001
+      x[x_zeros] = scale_zeroes_directly
     }
 
     # remove zero SD too

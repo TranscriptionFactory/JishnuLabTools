@@ -130,9 +130,9 @@ smartER = function(yaml_path, all = F, run_repeats = F) {
   yaml::write_yaml(er_input, new_yaml_path)
 
   if (runRepeats) {
-    JishnuLabTools::runER(new_yaml_path, runRepeats = T)
+    JishnuLabTools::runER(new_yaml_path, coarseGrid = T)
   } else {
-    JishnuLabTools::runER(new_yaml_path, runRepeats = F)
+    JishnuLabTools::runER(new_yaml_path, coarseGrid = F)
   }
   cat("Finished successfully\n")
 }

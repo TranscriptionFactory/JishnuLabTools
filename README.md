@@ -22,6 +22,6 @@ Read the publications:
 
 There are example yamls provided for regression and classification:
 ```
-JishnuLabTools::regression_parameters
-JishnuLabTools::classification_parameters
+JishnuLabTools::regression_params
+JishnuLabTools::classification_params
 ```
