@@ -12,7 +12,7 @@ arg_loader = function(args, default_arglist) {
 
   arglist = default_arglist
   for(a in arglist) {
-    if (any(lapply(a$options, function(x) any(stringr::str_detect(names(args),
+    if (any(sapply(a$options, function(x) any(stringr::str_detect(names(args),
                                                               pattern = x))))) {
       #length(intersect(a$options, names(args))) > 0) {
       arglist[a] = unlist(args[intersect(a$options, names(args))[1]])
