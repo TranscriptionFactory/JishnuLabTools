@@ -4,10 +4,16 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{running_ER_on_cluster}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteKeyword{PDF}
+  %\VignetteKeyword{HTML}
+  %\VignetteKeyword{vignette}
+  %\VignetteKeyword{package}
+  
+  # %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
+library(formatR)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -20,7 +26,7 @@ knitr::opts_chunk$set(
 
 ### Install development version
 
-```{r setup, eval = F}
+```{r setup, eval = F, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 library(devtools)
 
 # Note: if you submit an array job that calls this function in quick succession,
@@ -117,7 +123,7 @@ Rscript runER.R --yaml_path 'path_to_yaml' --coarse_grid F
 ```
 
 ### Save this as runER.R or whatever comes after Rscript above
-```{r runER, eval = F}
+```{r runER, eval = F, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 
