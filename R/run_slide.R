@@ -92,9 +92,9 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1) {
   if (names(er_model_eval)[2] == "corr") {
     evaltype = "corr"
   }
-  boxplot = ggplot2::ggboxplot(er_model_eval, x = "method", y = evaltype, palette = "npg",
+  boxplot = ggpubr::ggboxplot(er_model_eval, x = "method", y = evaltype, palette = "npg",
                       fill = "method" ) +
-    stat_compare_means(comparisons = list(c("plainER", "plainER_y"),
+    ggpubr::stat_compare_means(comparisons = list(c("plainER", "plainER_y"),
                                           c("lasso", "lasso_y")))
 
   ggplot2::ggsave(plot = boxplot, filename = paste0(yaml_input$out_path, 'auc_boxplot.png'))
