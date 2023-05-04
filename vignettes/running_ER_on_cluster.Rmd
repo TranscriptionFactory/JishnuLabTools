@@ -132,7 +132,7 @@ library(foreach)
 library(tidyverse)
 
 # if need to install
-devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools@master", force = F, dependencies = T)
+devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F, dependencies = T)
 
 library(JishnuLabTools)
 
