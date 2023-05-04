@@ -42,7 +42,9 @@ library(JishnuLabTools)
 
 ### Get example yaml files
 
-You can edit these files to have the paths to your X and Y data
+You can edit these files to have the paths to your X and Y data by using the list accessors (e.g. regression\$x_path = 'path to x') or you can just save the yaml and edit it.
+
+Note the output path should always end in "/"
 
 ### Example regression yaml
 
@@ -57,13 +59,41 @@ knitr::kable(data.frame(regression_parameters = unlist(regression)))
 ```{r example_yaml_class, eval = T}
 
 classification = JishnuLabTools::classification_params
-# knitr::kable(data.frame(classification_parameters = unlist(classification)))
 
 # this is just for printing here
 classification$y_levels = "[0, 1]"
 knitr::kable(data.frame(classification_parameters = unlist(classification)))
 
 ```
+
+### If you want to run a coarse grid search over specific (as opposed to the predfined) deltas and lambdas, the yaml file 
+### should have a list of values for delta and lambda, like this:
+```{r example_yaml_class_coarseGrid, eval = T}
+
+classification = JishnuLabTools::classification_params
+
+# this is just for printing here
+classification$y_levels = "[0, 1]"
+classification$delta = "[0.1, 0.05, 0.01]"
+classification$lambda = "[1.0, 0.1]"
+knitr::kable(data.frame(classification_parameters = unlist(classification)))
+
+```
+
+## Save the proper yaml file somewhere
+
+```{r save_yaml, eval = F}
+
+classification$x_path = 'x.csv'
+classification$y_path = 'y.csv'
+classification$out_path = '/'
+
+yaml::write_yaml(classification, 'where_you_want_to_save_yaml_file')
+
+```
+
+
+
 
 ### Slurm script for single submission (put your email into --mail-user=)
 
@@ -82,11 +112,11 @@ knitr::kable(data.frame(classification_parameters = unlist(classification)))
 module load gcc/10.2.0
 module load r/4.2.0
 
-Rscript runER.R "${SLURM_SUBMIT_DIR}/yaml/pipeline3_RM/LS_onset_RM_incl.yaml" 3
-
+Rscript runER.R --yaml_path 'path_to_yaml' --coarse_grid F 
 
 ```
 
+### Save this as runER.R or whatever comes after Rscript above
 ```{r runER, eval = F}
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
@@ -103,7 +133,6 @@ devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools@master", fo
 
 library(JishnuLabTools)
 
-
 cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
 if(is.na(cores)) cores <- detectCores()
 # if(!is.na(cores) & cores > 1) cores <- cores
@@ -111,13 +140,23 @@ registerDoParallel(cores)
 cat('number of cores using', cores, '. . .\n')
 
 
+# process arguments from command line
+command_args = JishnuLabTools:::arg_loader(args, JishnuLabTools::runER_args)
+
+yaml_path = command_args$yaml_path
+coarseGrid = command_args$coarse_grid
+
+# call ER function
+JishnuLabTools::runER(yaml_path, coarseGrid)
+
 
 ```
 
 ### Slurm batch submission
 
 You want to point to a folder with yaml files or dataframes (combined X/Y)
-
+Note, you should comment out the `install_github()` in the runER.R file so that you don't get rate
+limited
 ```{r slurm_array, eval = F}
 #!/bin/bash
 #SBATCH -t 3-00:00
@@ -135,7 +174,7 @@ echo "SLURM_JOBID: " $SLURM_JOBID
 echo "SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "SLURM_ARRAY_JOB_ID: " $SLURM_ARRAY_JOB_ID
 
-cd /ix/djishnu/Aaron/3_collabs/1_Torok_Jscl_ER/ER_analysis/yaml/pipeline3_RM
+cd 'path to where you have yaml files'
 
 arrayfile=`ls | awk -v line=$SLURM_ARRAY_TASK_ID '{if (NR == line) print $0}'`
 
@@ -143,6 +182,6 @@ module load gcc/10.2.0
 module load r/4.2.0
 echo $arrayfile
 # usage: Rscript -d datapath_from_working_dir_including_extension
-Rscript /ix/djishnu/Aaron/3_collabs/1_Torok_Jscl_ER/ER_analysis/runER.R $arrayfile 3 T
+Rscript runER.R --yaml_path $arrayfile --coarse_grid F
 
 ```
