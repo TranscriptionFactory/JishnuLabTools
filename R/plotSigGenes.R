@@ -39,12 +39,12 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
     cdf = rbind.data.frame(cdf, temp)
   }
 
-  plt = cdf %>% ggplot(., aes(x = factor(fac), y = heights, label = names)) +
-    geom_text(aes(color = factor(color))) +
-    scale_color_manual(values = c("blue", "red"), guide = "none") + theme_void() +
-    theme(axis.text.x = element_text(), axis.title.x = element_text(),
+  plt = cdf %>% ggplot2::ggplot(., aes(x = factor(fac), y = heights, label = names)) +
+    ggplot2::geom_text(aes(color = factor(color))) +
+    ggplot2::scale_color_manual(values = c("blue", "red"), guide = "none") + theme_void() +
+    ggplot2::theme(axis.text.x = element_text(), axis.title.x = element_text(),
           axis.title.y = element_text(angle = 90)) +
-    xlab("Latent Factor") + ylab("Genes Associated with Latent Factor Cluster") + ylim(0, 20) +
-    ggtitle("Genes Associated with Latent Factor")
+    ggplot2::xlab("Latent Factor") + ylab("Genes Associated with Latent Factor Cluster") + ggplot2::ylim(0, 20) +
+    ggplot2::ggtitle("Genes Associated with Latent Factor")
   return(list("plt" = plt, "plot_df" = cdf))
 }
