@@ -15,10 +15,10 @@ arg_loader = function(args, default_arglist) {
     if (any(sapply(a$options, function(x) any(stringr::str_detect(names(args),
                                                               pattern = x))))) {
       #length(intersect(a$options, names(args))) > 0) {
-      arglist[a] = unlist(args[intersect(a$options, names(args))[1]])
+      arglist[[a]] = unlist(args[intersect(a$options, names(args))[1]])
     } else {
       # empty argument; set as default
-      arglist[a] = a$default
+      arglist[[a]] = a$default
     }
   }
   return(arglist)
