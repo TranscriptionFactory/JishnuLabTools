@@ -97,5 +97,5 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1) {
     stat_compare_means(comparisons = list(c("plainER", "plainER_y"),
                                           c("lasso", "lasso_y")))
 
-  ggsave(plot = boxplot, filename = paste0(yaml_input$out_path, 'auc_boxplot.png'))
+  ggplot2::ggsave(plot = boxplot, filename = paste0(yaml_input$out_path, 'auc_boxplot.png'))
 }
