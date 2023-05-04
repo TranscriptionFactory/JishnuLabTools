@@ -34,8 +34,7 @@ library(devtools)
 
 # run this to install 
 devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F,
-                         dependencies = T,
-                         auth_token = "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")
+                         dependencies = T)
 
 library(JishnuLabTools)
 ```
@@ -133,9 +132,7 @@ library(foreach)
 library(tidyverse)
 
 # if need to install
-devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools@master", force = F,
-                         dependencies = T,
-                         auth_token = "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")
+devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools@master", force = F, dependencies = T)
 
 library(JishnuLabTools)
 

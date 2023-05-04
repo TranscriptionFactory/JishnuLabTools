@@ -347,13 +347,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3>Install development version</h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: if you submit an array job that calls this function in quick succession,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># you&#39;ll get rate limited and error out.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># run this to install </span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;TranscriptionFactory/JishnuLabTools&quot;</span>, <span class="at">force =</span> F,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">dependencies =</span> T,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">auth_token =</span> <span class="st">&quot;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&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: if you submit an array job that calls this function</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># in quick succession, you&#39;ll get rate limited and error</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># out.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># run this to install</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;TranscriptionFactory/JishnuLabTools&quot;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">force =</span> F, <span class="at">dependencies =</span> T)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(JishnuLabTools)</span></code></pre></div>
 </div>
@@ -613,7 +613,7 @@ the predfined) deltas and lambdas, the yaml file</h3>
 <div id="save-this-as-runer.r-or-whatever-comes-after-rscript-above" class="section level3">
 <h3>Save this as runER.R or whatever comes after Rscript above</h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>args <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly=</span><span class="cn">TRUE</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>args <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
@@ -621,27 +621,26 @@ the predfined) deltas and lambdas, the yaml file</h3>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># if need to install</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;TranscriptionFactory/JishnuLabTools@master&quot;</span>, <span class="at">force =</span> F,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">dependencies =</span> T,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">auth_token =</span> <span class="st">&quot;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&quot;</span>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(JishnuLabTools)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>cores <span class="ot">&lt;-</span>  <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">&#39;SLURM_CPUS_PER_TASK&#39;</span>, <span class="at">unset=</span><span class="cn">NA</span>))</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">is.na</span>(cores)) cores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># if(!is.na(cores) &amp; cores &gt; 1) cores &lt;- cores</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>(cores)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;number of cores using&#39;</span>, cores, <span class="st">&#39;. . .</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;TranscriptionFactory/JishnuLabTools@master&quot;</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">force =</span> F, <span class="at">dependencies =</span> T)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(JishnuLabTools)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>cores <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">&quot;SLURM_CPUS_PER_TASK&quot;</span>, <span class="at">unset =</span> <span class="cn">NA</span>))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.na</span>(cores)) cores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># if(!is.na(cores) &amp; cores &gt; 1) cores &lt;- cores</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>(cores)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;number of cores using&quot;</span>, cores, <span class="st">&quot;. . .</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co"># process arguments from command line</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>command_args <span class="ot">=</span> JishnuLabTools<span class="sc">:::</span><span class="fu">arg_loader</span>(args, JishnuLabTools<span class="sc">::</span>runER_args)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>yaml_path <span class="ot">=</span> command_args<span class="sc">$</span>yaml_path</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>coarseGrid <span class="ot">=</span> command_args<span class="sc">$</span>coarse_grid</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># call ER function</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>JishnuLabTools<span class="sc">::</span><span class="fu">runER</span>(yaml_path, coarseGrid)</span></code></pre></div>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># process arguments from command line</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>command_args <span class="ot">=</span> JishnuLabTools<span class="sc">:::</span><span class="fu">arg_loader</span>(args, JishnuLabTools<span class="sc">::</span>runER_args)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>yaml_path <span class="ot">=</span> command_args<span class="sc">$</span>yaml_path</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>coarseGrid <span class="ot">=</span> command_args<span class="sc">$</span>coarse_grid</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># call ER function</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>JishnuLabTools<span class="sc">::</span><span class="fu">runER</span>(yaml_path, coarseGrid)</span></code></pre></div>
 </div>
 <div id="slurm-batch-submission" class="section level3">
 <h3>Slurm batch submission</h3>
