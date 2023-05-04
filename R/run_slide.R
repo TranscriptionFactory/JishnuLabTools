@@ -64,13 +64,13 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1) {
 
   if (length(ks) > 0) {
     for (i in 1:length(ks)){
-      feature_res <-SigGenes_A(er_results, ks[[i]], as.matrix(x_mat), y_mat, thre=0.1, negcol="blue", posCol="red",orderbycol=T)
+      feature_res <-SLIDE::SigGenes_A(er_results, ks[[i]], as.matrix(x_mat), y_mat, thre=0.1, negcol="blue", posCol="red",orderbycol=T)
       feature_res <- feature_res[order(feature_res[, 1], decreasing = TRUE), ]
       sig_genes[[i]] <- feature_res
     }
   }
 
-  saveRDS(sig_genes, paste0(yaml_input$out_path, 'sig_genes.RDS'))
+    saveRDS(sig_genes, paste0(yaml_input$out_path, 'sig_genes.RDS'))
 
   # get significant genes plot
   sig_genes_res = JishnuLabTools::plotSigGenes(sig_genes = sig_genes, er_input = er_results, slide_res = slide_res, xdf = x_mat, ydf = y_mat)
