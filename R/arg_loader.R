@@ -19,14 +19,14 @@ arg_loader = function(args, default_arglist) {
 
 
 # runER_args = list(
-#   optparse::make_option(c("-x", "--x_path"), action = "store",
-#                         default = " ", help = "Path to X data"),
-#   optparse::make_option(c("-y", "--y_path"), action = "store",
-#                         default = " ", help = "Path to Y data"),
-#   optparse::make_option(c("-d", "--data_path"), action = "store",
-#                         default = " ", help = "Path to data"),
-#   optparse::make_option(c("-p", "--yaml_path"), action = "store",
-#                         default = " ", help = "Path to yaml file"),
+#   optparse::make_option(c("-x", "--x_path"), action = "store", type = "character",
+#                         default = "", help = "Path to X data"),
+#   optparse::make_option(c("-y", "--y_path"), action = "store",type = "character",
+#                         default = "", help = "Path to Y data"),
+#   optparse::make_option(c("-d", "--data_path"), action = "store",type = "character",
+#                         default = "", help = "Path to data"),
+#   optparse::make_option(c("-p", "--yaml_path"), action = "store",type = "character",
+#                         default = "", help = "Path to yaml file"),
 #   optparse::make_option(c("-c", "--coarse_grid"), action = "store_true",
 #                         default = F, help = "Run coarse grid search of lamda/deltas")
 # )
