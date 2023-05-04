@@ -610,8 +610,9 @@ the predfined) deltas and lambdas, the yaml file</h3>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>Rscript runER.R <span class="sc">--</span>yaml_path <span class="st">&#39;path_to_yaml&#39;</span> <span class="sc">--</span>coarse_grid F </span></code></pre></div>
 </div>
-<div id="save-this-as-runer.r-or-whatever-comes-after-rscript-above" class="section level3">
-<h3>Save this as runER.R or whatever comes after Rscript above</h3>
+<div id="example-script-1-save-this-as-runer.r-or-whatever-comes-after-rscript-above" class="section level3">
+<h3>Example Script 1: Save this as runER.R or whatever comes after
+Rscript above</h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>args <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -634,44 +635,80 @@ the predfined) deltas and lambdas, the yaml file</h3>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># process arguments from command line</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>command_args <span class="ot">=</span> JishnuLabTools<span class="sc">:::</span><span class="fu">arg_loader</span>(args, JishnuLabTools<span class="sc">::</span>runER_args)</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>yaml_path <span class="ot">=</span> command_args<span class="sc">$</span>yaml_path</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>coarseGrid <span class="ot">=</span> command_args<span class="sc">$</span>coarse_grid</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># call ER function</span></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>JishnuLabTools<span class="sc">::</span><span class="fu">runER</span>(yaml_path, coarseGrid)</span></code></pre></div>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>command_args <span class="ot">=</span> optparse<span class="sc">::</span><span class="fu">parse_args</span>(optparse<span class="sc">::</span><span class="fu">OptionParser</span>(<span class="at">option_list =</span> JishnuLabTools<span class="sc">::</span>runER_args),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">args =</span> args)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>yaml_path <span class="ot">=</span> command_args<span class="sc">$</span>yaml_path</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>coarseGrid <span class="ot">=</span> command_args<span class="sc">$</span>coarse_grid</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># call ER function</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>JishnuLabTools<span class="sc">::</span><span class="fu">runER</span>(yaml_path, coarseGrid)</span></code></pre></div>
+</div>
+<div id="example-script-2-call-essreg-functions-directly" class="section level3">
+<h3>Example Script 2: call EssReg functions directly</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>args <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly=</span><span class="cn">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreach)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># if need to install</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;TranscriptionFactory/JishnuLabTools&quot;</span>, <span class="at">force =</span> F, <span class="at">dependencies =</span> T)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(JishnuLabTools)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>cores <span class="ot">&lt;-</span>  <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">&#39;SLURM_CPUS_PER_TASK&#39;</span>, <span class="at">unset=</span><span class="cn">NA</span>))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">is.na</span>(cores)) cores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># if(!is.na(cores) &amp; cores &gt; 1) cores &lt;- cores</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>(cores)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;number of cores using&#39;</span>, cores, <span class="st">&#39;. . .</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># process arguments from command line</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>command_args <span class="ot">=</span> optparse<span class="sc">::</span><span class="fu">parse_args</span>(optparse<span class="sc">::</span><span class="fu">OptionParser</span>(<span class="at">option_list =</span> JishnuLabTools<span class="sc">::</span>runER_args), <span class="at">args =</span> args)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>yaml_path <span class="ot">=</span> command_args<span class="sc">$</span>yaml_path</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co"># pipeline 1</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>EssReg<span class="sc">::</span><span class="fu">pipelineER1</span>(yaml_path)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co"># pipeline 2</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>EssReg<span class="sc">::</span><span class="fu">pipelineER2</span>(yaml_path)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co"># pipeline 3</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>EssReg<span class="sc">::</span><span class="fu">pipelineER3</span>(yaml_path)</span></code></pre></div>
 </div>
 <div id="slurm-batch-submission" class="section level3">
 <h3>Slurm batch submission</h3>
 <p>You want to point to a folder with yaml files or dataframes (combined
 X/Y) Note, you should comment out the <code>install_github()</code> in
 the runER.R file so that you don’t get rate limited</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -t 3-00:00</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --array= numbers</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name= ER</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-user=aar126@pitt.edu</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-type=FAIL</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=1</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=150g</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=16</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>echo <span class="st">&quot;SLURM_JOBID: &quot;</span> <span class="sc">$</span>SLURM_JOBID</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>echo <span class="st">&quot;SLURM_ARRAY_TASK_ID: &quot;</span> <span class="sc">$</span>SLURM_ARRAY_TASK_ID</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>echo <span class="st">&quot;SLURM_ARRAY_JOB_ID: &quot;</span> <span class="sc">$</span>SLURM_ARRAY_JOB_ID</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>cd <span class="st">&#39;path to where you have yaml files&#39;</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>arrayfile<span class="ot">=</span><span class="st">`</span><span class="at">ls | awk -v line=$SLURM_ARRAY_TASK_ID &#39;{if (NR == line) print $0}&#39;</span><span class="st">`</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>module load gcc<span class="sc">/</span><span class="dv">10</span>.<span class="fl">2.0</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>module load r<span class="sc">/</span><span class="dv">4</span>.<span class="fl">2.0</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>echo <span class="sc">$</span>arrayfile</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co"># usage: Rscript -d datapath_from_working_dir_including_extension</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>Rscript runER.R <span class="sc">--</span>yaml_path <span class="sc">$</span>arrayfile <span class="sc">--</span>coarse_grid F</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -t 3-00:00</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --array= numbers</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name= ER</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-user=aar126@pitt.edu</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-type=FAIL</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=150g</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=16</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>echo <span class="st">&quot;SLURM_JOBID: &quot;</span> <span class="sc">$</span>SLURM_JOBID</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>echo <span class="st">&quot;SLURM_ARRAY_TASK_ID: &quot;</span> <span class="sc">$</span>SLURM_ARRAY_TASK_ID</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>echo <span class="st">&quot;SLURM_ARRAY_JOB_ID: &quot;</span> <span class="sc">$</span>SLURM_ARRAY_JOB_ID</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>cd <span class="st">&#39;path to where you have yaml files&#39;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>arrayfile<span class="ot">=</span><span class="st">`</span><span class="at">ls | awk -v line=$SLURM_ARRAY_TASK_ID &#39;{if (NR == line) print $0}&#39;</span><span class="st">`</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>module load gcc<span class="sc">/</span><span class="dv">10</span>.<span class="fl">2.0</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>module load r<span class="sc">/</span><span class="dv">4</span>.<span class="fl">2.0</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>echo <span class="sc">$</span>arrayfile</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># usage: Rscript -d datapath_from_working_dir_including_extension</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>Rscript runER.R <span class="sc">--</span>yaml_path <span class="sc">$</span>arrayfile <span class="sc">--</span>coarse_grid F</span></code></pre></div>
 </div>
 </div>
 

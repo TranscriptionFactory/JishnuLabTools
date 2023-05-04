@@ -121,7 +121,7 @@ Rscript runER.R --yaml_path 'path_to_yaml' --coarse_grid F
 
 ```
 
-### Save this as runER.R or whatever comes after Rscript above
+### Example Script 1: Save this as runER.R or whatever comes after Rscript above
 ```{r runER, eval = F, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
@@ -144,7 +144,7 @@ cat('number of cores using', cores, '. . .\n')
 
 
 # process arguments from command line
-command_args = JishnuLabTools:::arg_loader(args, JishnuLabTools::runER_args)
+command_args = optparse::parse_args(optparse::OptionParser(option_list = JishnuLabTools::runER_args), args = args)
 
 yaml_path = command_args$yaml_path
 coarseGrid = command_args$coarse_grid
@@ -152,7 +152,42 @@ coarseGrid = command_args$coarse_grid
 # call ER function
 JishnuLabTools::runER(yaml_path, coarseGrid)
 
+```
 
+### Example Script 2: call EssReg functions directly
+```{r essreg, eval = F}
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+
+library(devtools)
+library(doParallel)
+library(foreach)
+library(tidyverse)
+
+# if need to install
+devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F, dependencies = T)
+
+library(JishnuLabTools)
+
+cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
+if(is.na(cores)) cores <- detectCores()
+# if(!is.na(cores) & cores > 1) cores <- cores
+registerDoParallel(cores)
+cat('number of cores using', cores, '. . .\n')
+
+# process arguments from command line
+command_args = optparse::parse_args(optparse::OptionParser(option_list = JishnuLabTools::runER_args), args = args)
+
+yaml_path = command_args$yaml_path
+
+# pipeline 1
+EssReg::pipelineER1(yaml_path)
+
+# pipeline 2
+EssReg::pipelineER2(yaml_path)
+
+# pipeline 3
+EssReg::pipelineER3(yaml_path)
 ```
 
 ### Slurm batch submission
