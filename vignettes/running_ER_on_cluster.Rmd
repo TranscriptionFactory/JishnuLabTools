@@ -155,6 +155,9 @@ JishnuLabTools::runER(yaml_path, coarseGrid)
 ```
 
 ### Example Script 2: call EssReg functions directly
+The shell script should have line
+
+` Rscript runER.R --yaml_path 'path_to_yaml' --pipeline 3 `
 ```{r essreg, eval = F}
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)

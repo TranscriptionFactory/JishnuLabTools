@@ -733,6 +733,8 @@ Rscript above</h3>
 </div>
 <div id="example-script-2-call-essreg-functions-directly" class="section level3">
 <h3>Example Script 2: call EssReg functions directly</h3>
+<p>The shell script should have line</p>
+<p><code>Rscript runER.R --yaml_path &#39;path_to_yaml&#39; --pipeline 3</code></p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>args <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly=</span><span class="cn">TRUE</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
