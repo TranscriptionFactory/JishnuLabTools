@@ -377,6 +377,92 @@ can just save the yaml and edit it.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>regression <span class="ot">=</span> JishnuLabTools<span class="sc">::</span>regression_params</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">regression_parameters =</span> <span class="fu">unlist</span>(regression)))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">regression_parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">x_path</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">y_path</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">out_path</td>
+<td align="left">/</td>
+</tr>
+<tr class="even">
+<td align="left">k</td>
+<td align="left">5</td>
+</tr>
+<tr class="odd">
+<td align="left">eval_type</td>
+<td align="left">corr</td>
+</tr>
+<tr class="even">
+<td align="left">rep_cv</td>
+<td align="left">20</td>
+</tr>
+<tr class="odd">
+<td align="left">nreps</td>
+<td align="left">20</td>
+</tr>
+<tr class="even">
+<td align="left">alpha_level</td>
+<td align="left">0.05</td>
+</tr>
+<tr class="odd">
+<td align="left">thresh_fdr</td>
+<td align="left">0.2</td>
+</tr>
+<tr class="even">
+<td align="left">permute</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">std_cv</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">std_y</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">benchmark</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">delta</td>
+<td align="left">0.1</td>
+</tr>
+<tr class="odd">
+<td align="left">lambda</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">lasso</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">plsr</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">pcr</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">y_factor</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="example-classification-yaml" class="section level3">
 <h3>Example classification yaml</h3>

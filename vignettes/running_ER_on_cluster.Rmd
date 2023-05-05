@@ -53,7 +53,7 @@ Note the output path should always end in "/"
 
 ### Example regression yaml
 
-```{r example_yaml_reg, eval = F}
+```{r example_yaml_reg, eval = T}
 
 regression = JishnuLabTools::regression_params
 knitr::kable(data.frame(regression_parameters = unlist(regression)))
