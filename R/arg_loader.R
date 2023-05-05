@@ -28,8 +28,10 @@ arg_loader = function(args, default_arglist) {
 #   optparse::make_option(c("-p", "--yaml_path"), action = "store",type = "character",
 #                         default = "", help = "Path to yaml file"),
 #   optparse::make_option(c("-c", "--coarse_grid"), action = "store_true",
-#                         default = F, help = "Run coarse grid search of lamda/deltas")
-# )
+#                         default = F, help = "Run coarse grid search of lamda/deltas"),
+#   optparse::make_option(c("-e", "--pipeline"), action = "store", type = "integer",
+#                         default = 3, help = "Pipeline # (1, 2, or 3)")
+#   )
 
 # arglist = list(x_path = list(options = c("x", "x_path"), default = ""),
 #                y_path = list(options = c("y", "y_path"), default = ""),

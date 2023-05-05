@@ -180,14 +180,22 @@ command_args = optparse::parse_args(optparse::OptionParser(option_list = JishnuL
 
 yaml_path = command_args$yaml_path
 
-# pipeline 1
-EssReg::pipelineER1(yaml_path)
+pipeline = command_args$pipeline
 
-# pipeline 2
-EssReg::pipelineER2(yaml_path)
+# run pipeline #
+  
+if (pipeline == 1) {
+  # pipeline 1
+  EssReg::pipelineER1(yaml_path)
+} else if (pipeline == 2) {
+  # pipeline 2
+  EssReg::pipelineER2(yaml_path)
+} else {
+  # default is just to run 3
+  # pipeline 3
+  EssReg::pipelineER3(yaml_path)
+}
 
-# pipeline 3
-EssReg::pipelineER3(yaml_path)
 ```
 
 ### Slurm batch submission

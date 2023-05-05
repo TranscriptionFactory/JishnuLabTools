@@ -17,12 +17,23 @@ if(is.na(cores)) cores <- detectCores()
 registerDoParallel(cores)
 cat('number of cores using', cores, '. . .\n')
 
-
 # process arguments from command line
 command_args = optparse::parse_args(optparse::OptionParser(option_list = JishnuLabTools::runER_args), args = args)
 
 yaml_path = command_args$yaml_path
-coarseGrid = command_args$coarse_grid
 
-# call ER function
-JishnuLabTools::runER(yaml_path, coarseGrid)
+pipeline = command_args$pipeline
+
+# run pipeline #
+
+if (pipeline == 1) {
+  # pipeline 1
+  EssReg::pipelineER1(yaml_path)
+} else if (pipeline == 2) {
+  # pipeline 2
+  EssReg::pipelineER2(yaml_path)
+} else {
+  # default is just to run 3
+  # pipeline 3
+  EssReg::pipelineER3(yaml_path)
+}
