@@ -47,7 +47,7 @@ library(JishnuLabTools)
 
 ### Get example yaml files
 
-You can edit these files to have the paths to your X and Y data by using the list accessors (e.g. regression\$x_path = 'path to x') or you can just save the yaml and edit it.
+You can edit these files to have the paths to your X and Y data by using the list accessors (e.g. `regression\$x_path = 'path to x' `) or you can just save the yaml and edit it.
 
 Note the output path should always end in "/"
 
