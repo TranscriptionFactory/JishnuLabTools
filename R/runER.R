@@ -1,6 +1,10 @@
 #' @export
-runER = function(yaml_path, coarseGrid = F) {
+runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = F) {
 
+  if (cleanData) {
+    cleaned = JishnuLabTools::load_data(yaml = yaml_path)
+    yaml_path = cleaned$yaml
+  }
   er_input = yaml::yaml.load_file(yaml_path)
   original_path = er_input$out_path
 
@@ -50,5 +54,13 @@ runER = function(yaml_path, coarseGrid = F) {
 
     EssReg::pipelineER3(yaml_path)
     JishnuLabTools::run_slide(loaded_yaml = er_input)
+  }
+  
+  if (cleanData == T && removeCleanedData == T) {
+    if (file.exists(yaml_path$x_path) == T && file.exists(yaml_path$y_path) == T) {
+    cat(" Deleting x & y saved in output directory\n")
+    file.remove(yaml_path$x_path)
+    file.remove(yaml_path$y_path)
+    }
   }
 }
