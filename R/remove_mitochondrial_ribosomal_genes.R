@@ -9,9 +9,9 @@ remove_mitochondrial_ribosomal_genes = function(df) {
   if (length(cluster_names) == 0 && length(no_cluster_names) == 0) {
     return(df)
   } else if (length(cluster_names) > 0) {
-    df = df[, -which(cluster_names)]
+    df = df[, -cluster_names]
   } else {
-    df = df[, -which(no_cluster_names)]
+    df = df[, -no_cluster_names]
   }
   return(df)
 }
