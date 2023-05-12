@@ -58,7 +58,7 @@ load_data = function(obj = NULL, yaml, remove_mito_ribo = F, create_dir = T) {
     # update yaml parameters with new paths
 
     loaded_yaml$x_path = xpath
-    loaded_path$y_path = ypath
+    loaded_yaml$y_path = ypath
 
     new_yaml_path = paste0(loaded_yaml$out_path, "yaml_parameters.yaml")
     # save this yaml file for reference
