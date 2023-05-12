@@ -33,7 +33,7 @@ load_data = function(obj = NULL, yaml, remove_mito_ribo = F, create_dir = T) {
   }
 
   if (remove_mito_ribo) {
-    df[, -1] = JishnuLabTools::remove_mitochondrial_ribosomal_genes(df[, -1])
+    df = cbind.data.frame(df[, 1], JishnuLabTools::remove_mitochondrial_ribosomal_genes(df[, -1]))
   }
 
   if (! is.null(df)) {
