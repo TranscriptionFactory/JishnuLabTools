@@ -2,6 +2,7 @@
 
 export(clean_data)
 export(getTopGenes)
+export(get_enrichment_from_sig_genes)
 export(load_data)
 export(plotSigGenes)
 export(remove_mitochondrial_ribosomal_genes)
