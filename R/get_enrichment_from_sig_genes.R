@@ -43,7 +43,8 @@ get_enrichment_from_sig_genes = function(data_path, run_params,
   sig_genes = JishnuLabTools:::load_output_from_runs(runs = data_path,
                                                      filename = "sig_genes.RDS")
 
-  if (sig_genes == F) {
+  #
+  if (is.null(sig_genes)) {
     # didn't find file
     return()
   }

@@ -20,7 +20,7 @@ load_output_from_runs = function(runs, filename) {
   }
 
   if ( length(runs_with_desired_file) == 0 ) {
-    return(FALSE)
+    return(NULL)
   } else {
     # read files using function passed
     res = lapply(runs_with_desired_file, function(x) JishnuLabTools:::safely_load_obj_from_path(x))#function_to_read_files(x))
