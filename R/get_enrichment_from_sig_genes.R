@@ -43,6 +43,10 @@ get_enrichment_from_sig_genes = function(data_path, run_params,
   sig_genes = JishnuLabTools:::load_output_from_runs(runs = data_path,
                                                      filename = "sig_genes")
 
+  if (sig_genes == F) {
+    # didn't find file
+    return()
+  }
   # get all the genes from all latent factors
   all_sig_genes = unname(unlist(lapply(unlist(sig_genes, recursive = F), function(x) x$gene)))
 
