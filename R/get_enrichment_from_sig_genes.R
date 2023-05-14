@@ -49,7 +49,8 @@ get_enrichment_from_sig_genes = function(data_path, run_params,
     return()
   }
   # get all the genes from all latent factors
-  all_sig_genes = unname(unlist(lapply(unlist(sig_genes, recursive = F), function(x) x$gene)))
+  # all_sig_genes = unname(unlist(lapply(unlist(sig_genes, recursive = F), function(x) x$gene)))
+  all_sig_genes = unname(unlist(lapply(sig_genes, function(x) x$gene)))
 
   # convert sig genes to title (first letter capitalized, rest lowercase)
   all_sig_genes = stringr::str_to_title(all_sig_genes)
