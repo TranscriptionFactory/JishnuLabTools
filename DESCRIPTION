@@ -40,6 +40,7 @@ Imports:
     optparse,
     ggpubr,
     EssReg,
+    WebGestaltR,
     SLIDE
 Remotes: Hanxi-002/EssReg, jishnu-lab/SLIDE
 Suggests: 
