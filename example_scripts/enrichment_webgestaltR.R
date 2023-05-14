@@ -23,7 +23,10 @@ get_enrichment_from_yaml = function(yaml_path, organism = "hsapiens") {
     er_input = yaml::yaml.load_file(yaml_path)
   }
 
-  # load the sig genes file
+  # load the sig genes file. default function is that its saved as an RDS file
+  # the default parameter for function_to_read_files is: function(x) readRDS(x)
+  # if you had it saved as a csv, it would be
   sig_genes = JishnuLabTools:::load_output_from_runs(runs = er_input$out_path,
-                                                     filename = "sig_genes")
+                                                     filename = "sig_genes",
+                                                     function_to_read_files = )
 }

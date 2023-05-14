@@ -3,7 +3,7 @@
 # filename: common name shared among all output files that you want (e.g all
 # ER pipeline3 outputs begin with 'final')
 load_output_from_runs = function(runs, filename,
-                                function_to_read_files = function(x) readRDS(x)) {
+                                function_to_read_files = function(x) JishnuLabTools:::safely_load_obj_from_path(x)) {
 
   runs_with_desired_file = sapply(runs, function(x)
     list.files(x, full.names = T)[stringr::str_which(list.files(x),
