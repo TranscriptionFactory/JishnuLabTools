@@ -2,7 +2,8 @@
 set_k_folds = function(er_input){
 
   # load the y from input
-  y = as.matrix(read.csv(er_input$y_path), row.names = 1)
+  y = JishnuLabTools:::safely_load_obj_from_path(er_input$y_path)
+  #as.matrix(read.csv(er_input$y_path), row.names = 1)
   # sample size
   n = min(length(y), nrow(y))
 

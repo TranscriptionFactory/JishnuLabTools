@@ -27,10 +27,10 @@ remove_zero_median_cols = F) {
 
   if ( !is.null(obj)) {
     # use this parameter if you don't want to deal with editing yaml files
-    df = JishnuLabTools:::check_for_df_or_path(obj)
+    df = JishnuLabTools:::safely_load_obj_from_path(obj)
   } else {
     # load data from yaml file
-    df = JishnuLabTools::check_for_df_or_path(yaml)
+    df = JishnuLabTools::safely_load_obj_from_path(yaml)
   }
 
   if (remove_mito_ribo) {
@@ -46,11 +46,11 @@ remove_zero_median_cols = F) {
 
     # will just remove columns with zero standard deviation.
     # to remove based on quantile, and set quantile
-    
+
     cleaned = JishnuLabTools::clean_data(x = x, y = y, edit_data = T,
                                          quantile_filter = quantile_filter, remove_zero_median_cols = remove_zero_median_cols)
 
-    
+
 
 
     # we are going to save these edited data to our output folder

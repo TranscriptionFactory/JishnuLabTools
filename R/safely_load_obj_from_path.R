@@ -1,5 +1,5 @@
 # checking input
-check_for_df_or_path = function(inputvar) {
+safely_load_obj_from_path = function(inputvar) {
   if ( !is.null(inputvar) ) {
 
     # check if its a yaml file path
