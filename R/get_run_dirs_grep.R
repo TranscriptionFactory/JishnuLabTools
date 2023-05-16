@@ -2,7 +2,7 @@
 get_run_dirs_grep = function(path = ".", filename = "sig_genes.rds") {
 
   # make filename for searching
-  filename_pattern = paste0("(?i)", filename, "$")
+  filename_pattern = paste0("(?i)", filename)
 
   # get everything that ends with r_lambda..._delta... (signature for repeated runs)
   all_runs = grep(x = list.dirs(path),
@@ -10,13 +10,13 @@ get_run_dirs_grep = function(path = ".", filename = "sig_genes.rds") {
                   value = T, ignore.case = T)
 
   # could also directly just look for ER/SLIDE results
-  runs_with_sig_genes = grep(x = list.files(all_runs, full.names = TRUE,recursive = TRUE),
+  runs_with_filename = grep(x = list.files(all_runs, full.names = TRUE,recursive = TRUE),
                              pattern = filename_pattern,
                              value = T, ignore.case = T)
 
   # remove the "sig_genes.rds" so that we know which runs we want to check (we'll need
   # other files from there)
-  valid_runs = stringr::str_split_i(runs_with_sig_genes, i = 1,
+  valid_runs = stringr::str_split_i(runs_with_filename, i = 1,
                                                pattern = filename_pattern)
 
   # get top level (run) directory for summaries
