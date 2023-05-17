@@ -5,11 +5,18 @@ library(devtools)
 library(doParallel)
 library(foreach)
 library(tidyverse)
+library(optparse)
 
 # if need to install
-devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F, dependencies = T)
+# main directories are Hanxi-002/EssReg and jishnu-lab/SLIDE should be installed here - 
+devtools::install_github(repo = "Hanxi-00/EssReg", force = F, dependencies = T)
+devtools::install_github(repo = "jishnu-lab/SLIDE", force = F, dependencies = T)
 
-library(JishnuLabTools)
+#devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F, dependencies = T)
+
+library(EssReg)
+library(SLIDE)
+#library(JishnuLabTools)
 
 cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
 if(is.na(cores)) cores <- detectCores()
