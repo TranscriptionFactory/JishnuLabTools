@@ -25,7 +25,22 @@ registerDoParallel(cores)
 cat('number of cores using', cores, '. . .\n')
 
 # process arguments from command line
-command_args = optparse::parse_args(optparse::OptionParser(option_list = JishnuLabTools::runER_args), args = args)
+
+runER_args = list(
+  optparse::make_option(c("-x", "--x_path"), action = "store", type = "character",
+                        default = "", help = "Path to X data"),
+  optparse::make_option(c("-y", "--y_path"), action = "store",type = "character",
+                        default = "", help = "Path to Y data"),
+  optparse::make_option(c("-d", "--data_path"), action = "store",type = "character",
+                        default = "", help = "Path to data"),
+  optparse::make_option(c("-p", "--yaml_path"), action = "store",type = "character",
+                        default = "", help = "Path to yaml file"),
+  optparse::make_option(c("-c", "--coarse_grid"), action = "store_true",
+                        default = F, help = "Run coarse grid search of lamda/deltas"),
+  optparse::make_option(c("-e", "--pipeline"), action = "store", type = "integer",
+                        default = 3, help = "Pipeline # (1, 2, or 3)")
+  )
+command_args = optparse::parse_args(optparse::OptionParser(option_list = runER_args), args = args)
 
 yaml_path = command_args$yaml_path
 
