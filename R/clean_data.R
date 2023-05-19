@@ -2,6 +2,7 @@
 clean_data <- function(xdata, ydata, edit_data = F,
                       quantile_filter = 0, remove_zero_median_cols = F,
                       remove_zero_median_rows = F, scale_zeroes_directly = 0,
+                      remove_spurious = c("GM42418", "LARS2"),
                       er_input = NULL) {
 
   mode = ifelse(edit_data == T, 1, 0)
@@ -20,6 +21,14 @@ clean_data <- function(xdata, ydata, edit_data = F,
   }
 
   if (mode > 0) {
+  
+  
+    if (!is.null(remove_spurious) && length(remove_spurious) > 0) {
+      spurious_cols = which(stringr::str_to_upper(colnames(xdata)) %in% remove_spurious)
+      if (length(spurious_cols) > 0) {
+        xdata = xdata[, -spurious_cols]
+      }
+    }
 
     if (scale_zeroes_directly > 0) {
       x_zeros = which(x == 0)
