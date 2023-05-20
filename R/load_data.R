@@ -2,8 +2,10 @@
 # load data as a single matrix with first column as Y values
 # obj is either a loaded dataframe (matrix, list, or dataframe) or a path to one
 # out_path is from yaml file
-load_data = function(obj = NULL, yaml, remove_mito_ribo = F, create_dir = T, col_var_quantile_filter = 0,
-remove_zero_median_cols = F) {
+# ... are additional arguments passed to clean_data function (see ref)
+load_data = function(obj = NULL, yaml, create_dir = T,
+                     clean_data_function = JishnuLabTools::clean_data,
+                     ...) {
 
   # did you pass a yaml file
   if ( typeof(yaml) == "character" &&
@@ -18,7 +20,7 @@ remove_zero_median_cols = F) {
 
   if (! dir.exists(loaded_yaml$out_path)) {
     if (create_dir) {
-      dir.create(loaded_yaml$out_path)
+      dir.create(loaded_yaml$out_path, recursive = T)
     } else {
       cat("Directory doesn't exist. Check yaml out_path or set create_dir = T \n")
       return()
@@ -33,9 +35,6 @@ remove_zero_median_cols = F) {
     df = JishnuLabTools::safely_load_obj_from_path(yaml)
   }
 
-  if (remove_mito_ribo) {
-    df = cbind.data.frame(df[, 1], JishnuLabTools::remove_mitochondrial_ribosomal_genes(df[, -1]))
-  }
 
   if (! is.null(df)) {
     # shuffle rows
@@ -47,11 +46,7 @@ remove_zero_median_cols = F) {
     # will just remove columns with zero standard deviation.
     # to remove based on quantile, and set quantile
 
-    cleaned = JishnuLabTools::clean_data(x = x, y = y, edit_data = T,
-                                         col_var_quantile_filter = col_var_quantile_filter, remove_zero_median_cols = remove_zero_median_cols)
-
-
-
+    cleaned = clean_data_function(xdata = x, ydata = y, ...)
 
     # we are going to save these edited data to our output folder
     xpath = paste0(loaded_yaml$out_path, "x.csv")

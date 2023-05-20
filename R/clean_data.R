@@ -1,8 +1,12 @@
 #' @export
-clean_data <- function(xdata, ydata, edit_data = F,
-                      col_var_quantile_filter = 0, remove_zero_median_cols = F,
-                      remove_zero_median_rows = F, scale_zeroes_directly = 0,
+clean_data = function(xdata, ydata, edit_data = T,
+                      col_var_quantile_filter = 0,
+                      row_var_quantile_filter = 0,
+                      remove_zero_median_cols = F,
+                      remove_zero_median_rows = F,
+                      scale_zeroes_directly = 0,
                       remove_spurious = c("GM42418", "LARS2"),
+                      remove_mito_ribo = F,
                       er_input = NULL) {
 
   mode = ifelse(edit_data == T, 1, 0)
@@ -21,6 +25,10 @@ clean_data <- function(xdata, ydata, edit_data = F,
   }
 
   if (mode > 0) {
+
+    if (remove_mito_ribo) {
+      xdata = JishnuLabTools::remove_mitochondrial_ribosomal_genes(xdata)
+    }
 
 
     if (!is.null(remove_spurious) && length(remove_spurious) > 0) {
@@ -43,35 +51,48 @@ clean_data <- function(xdata, ydata, edit_data = F,
       xdata <- xdata[, -zero_sd]
     }
 
-    if (col_var_quantile_filter >= 0) {
-      # filter quantiles and remove empty rows
+    if (remove_zero_median_cols) {
 
-      empty_cols <- which(apply(xdata, 2, median) == 0)
+      zero_med_cols = which(apply(xdata, 2, median) == 0)
 
+      if ( length(zero_med_cols) > 0 ) {
+        xdata = xdata[, -zero_med_cols]
+      }
+    }
+
+    if (col_var_quantile_filter > 0) {
+      # filter column variance quantile
       colvars <- apply(xdata, 2, var)
 
       low_var_cols <- which(colvars < quantile(colvars, col_var_quantile_filter))
 
-      if (remove_zero_median_cols) {
-        remove_cols <- base::union(empty_cols, low_var_cols)
-      } else {
-        remove_cols <- low_var_cols
+      if (length(low_var_cols > 0)) {
+        xdata <- xdata[, -low_var_cols]
       }
+    }
 
-      if (length(remove_cols > 0)) {
-        xdata <- xdata[, -remove_cols]
+    if (remove_zero_median_rows) {
+      # remove empty rows last
+      empty_rows <- which(apply(xdata, 1, median) == 0)
+
+      # check if we need to remove any rows
+      if (length(empty_rows) > 0) {
+        # remove rows
+        xdata <- xdata[-empty_rows,]
+        ydata <- ydata[-empty_rows]
       }
+    }
 
-      if (remove_zero_median_rows) {
-        # remove empty rows last
-        empty_rows <- which(apply(xdata, 1, median) == 0)
+    if (row_var_quantile_filter) {
+      # remove empty rows last
+      rowvars <- apply(xdata, 1, var)
+      low_var_rows <- which(rowvars < quantile(rowvars, row_var_quantile_filter))
 
-        # check if we need to remove any rows
-        if (length(empty_rows) > 0) {
-          # remove rows
-          xdata <- xdata[-empty_rows,]
-          ydata <- ydata[-empty_rows]
-        }
+      # check if we need to remove any rows
+      if (length(low_var_rows) > 0) {
+        # remove rows
+        xdata <- xdata[-low_var_rows,]
+        ydata <- ydata[-low_var_rows]
       }
     }
   }
