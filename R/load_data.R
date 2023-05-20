@@ -48,6 +48,12 @@ load_data = function(obj = NULL, yaml, create_dir = T,
 
     cleaned = clean_data_function(xdata = x, ydata = y, ...)
 
+    if ( !(is.list(cleaned) && all(c("x", "y") %in% names(cleaned))) ){
+      # cleaning function didn't return expected values
+      cat("cleaning function didn't return expected values - expecting list with x = xdata and y = ydata \n")
+      return()
+    }
+
     # we are going to save these edited data to our output folder
     xpath = paste0(loaded_yaml$out_path, "x.csv")
     ypath = paste0(loaded_yaml$out_path, "y.csv")
