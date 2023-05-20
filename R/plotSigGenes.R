@@ -1,6 +1,7 @@
 #' @export
 plotSigGenes = function(sig_genes = NULL, er_input = NULL,
-                        slide_res = NULL, xdf = NULL, ydf = NULL) {
+                        slide_res = NULL, xdf = NULL, ydf = NULL,
+                        output_plot_path = NULL) {
 
 
   sdf = JishnuLabTools:::safely_load_obj_from_path(sig_genes)
@@ -39,12 +40,24 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
     cdf = rbind.data.frame(cdf, temp)
   }
 
-  plt = cdf %>% ggplot2::ggplot(., aes(x = factor(fac), y = heights, label = names)) +
+  cdf$loading_anno = ifelse(cdf$A_loading == 1, "*", " ")
+
+  cdf$names_anno = paste0(cdf$names, cdf$loading_anno)
+
+  plt = cdf %>% ggplot2::ggplot(., aes(x = factor(fac), y = heights, label = names_anno)) +
     ggplot2::geom_text(aes(color = factor(color))) +
     ggplot2::scale_color_manual(values = c("blue", "red"), guide = "none") + theme_void() +
     ggplot2::theme(axis.text.x = element_text(), axis.title.x = element_text(),
           axis.title.y = element_text(angle = 90)) +
     ggplot2::xlab("Latent Factor") + ylab("Genes Associated with Latent Factor Cluster") + ggplot2::ylim(0, 20) +
     ggplot2::ggtitle("Genes Associated with Latent Factor")
+
+  if ( !is.null(output_plot_path) ) {
+
+    saveRDS(cdf, paste0(output_plot_path, 'plotSigGenes_data.RDS'))
+    ggplot2::ggsave(plot = plt, filename = paste0(output_plot_path, 'plotSigGenes.pdf'),
+                    device = "pdf", width = 1.5 * length(ks), height = 7)
+  }
+
   return(list("plt" = plt, "plot_df" = cdf))
 }

@@ -2,7 +2,7 @@
 # load data as a single matrix with first column as Y values
 # obj is either a loaded dataframe (matrix, list, or dataframe) or a path to one
 # out_path is from yaml file
-load_data = function(obj = NULL, yaml, remove_mito_ribo = F, create_dir = T, quantile_filter = 0,
+load_data = function(obj = NULL, yaml, remove_mito_ribo = F, create_dir = T, col_var_quantile_filter = 0,
 remove_zero_median_cols = F) {
 
   # did you pass a yaml file
@@ -48,7 +48,7 @@ remove_zero_median_cols = F) {
     # to remove based on quantile, and set quantile
 
     cleaned = JishnuLabTools::clean_data(x = x, y = y, edit_data = T,
-                                         quantile_filter = quantile_filter, remove_zero_median_cols = remove_zero_median_cols)
+                                         col_var_quantile_filter = col_var_quantile_filter, remove_zero_median_cols = remove_zero_median_cols)
 
 
 

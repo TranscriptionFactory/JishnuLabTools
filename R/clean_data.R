@@ -1,6 +1,6 @@
 #' @export
 clean_data <- function(xdata, ydata, edit_data = F,
-                      quantile_filter = 0, remove_zero_median_cols = F,
+                      col_var_quantile_filter = 0, remove_zero_median_cols = F,
                       remove_zero_median_rows = F, scale_zeroes_directly = 0,
                       remove_spurious = c("GM42418", "LARS2"),
                       er_input = NULL) {
@@ -21,8 +21,8 @@ clean_data <- function(xdata, ydata, edit_data = F,
   }
 
   if (mode > 0) {
-  
-  
+
+
     if (!is.null(remove_spurious) && length(remove_spurious) > 0) {
       spurious_cols = which(stringr::str_to_upper(colnames(xdata)) %in% remove_spurious)
       if (length(spurious_cols) > 0) {
@@ -43,14 +43,14 @@ clean_data <- function(xdata, ydata, edit_data = F,
       xdata <- xdata[, -zero_sd]
     }
 
-    if (quantile_filter >= 0) {
+    if (col_var_quantile_filter >= 0) {
       # filter quantiles and remove empty rows
 
       empty_cols <- which(apply(xdata, 2, median) == 0)
 
       colvars <- apply(xdata, 2, var)
 
-      low_var_cols <- which(colvars < quantile(colvars, quantile_filter))
+      low_var_cols <- which(colvars < quantile(colvars, col_var_quantile_filter))
 
       if (remove_zero_median_cols) {
         remove_cols <- base::union(empty_cols, low_var_cols)

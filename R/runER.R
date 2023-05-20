@@ -8,11 +8,8 @@ runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = F
   er_input = yaml::yaml.load_file(yaml_path)
   original_path = er_input$out_path
 
-  er_input$out_path = paste0(original_path, 'pipeline3/')
-
   if (coarseGrid) {
     er_input$k = JishnuLabTools::set_k_folds(er_input)
-
 
     if (length(er_input$delta) == 1) {
       # default deltas and lambdas if we aren't passed list of deltas
@@ -21,19 +18,24 @@ runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = F
     } else {
       # use the passed list of deltas
       deltas = er_input$delta
-
-      # check if we have a list of lambas (we should test more than 1, but dont
-      # need to test many)
-      if (length(er_input$lambda) > 1) {
-        # set lambdas to this list
-        lambdas = er_input$lambda
-        # otherwise we just use the lambdas defined above
-      }
     }
 
-    for (l in lambdas) {
-      for (d in deltas) {
-        er_input$out_path = paste0(original_path, 'pipeline3/delta', d, "_lambda", l, "/")
+    # check if we have a list of lambas (we should test more than 1, but dont
+    # need to test many)
+    if (length(er_input$lambda) > 1) {
+      # set lambdas to this list
+      lambdas = er_input$lambda
+      # otherwise we just use the lambdas defined above
+    }
+
+    run_list = list()
+
+    for (d in deltas) {
+      for (l in lambdas) {
+        er_input$out_path = paste0(original_path, 'lambda', l, "_delta", d, "/")
+
+        run_list = append(run_list, er_input$out_path)
+
         er_input$delta = d
         er_input$lambda = l
         yaml::write_yaml(er_input, yaml_path)
@@ -55,7 +57,12 @@ runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = F
     EssReg::pipelineER3(yaml_path)
     JishnuLabTools::run_slide(loaded_yaml = er_input)
   }
-  
+
+  # add main direcotry and runs to run list
+  run_list = list(run_dir = original_path, runs = run_list)
+  # save run list
+  saveRDS(run_list, paste0(original_path, "run_list.RDS"))
+
   if (cleanData == T && removeCleanedData == T) {
     if (file.exists(yaml_path$x_path) == T && file.exists(yaml_path$y_path) == T) {
     cat(" Deleting x & y saved in output directory\n")

@@ -70,33 +70,16 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
     }
   }
 
-    saveRDS(sig_genes, paste0(yaml_input$out_path, 'sig_genes.RDS'))
+  saveRDS(sig_genes, paste0(yaml_input$out_path, 'sig_genes.RDS'))
+
 
   # get significant genes plot
-  sig_genes_res = JishnuLabTools::plotSigGenes(sig_genes = sig_genes, er_input = er_results, slide_res = slide_res, xdf = x_mat, ydf = y_mat)
+  sig_genes_res = JishnuLabTools::plotSigGenes(sig_genes = sig_genes,
+                                               er_input = er_results, slide_res = slide_res,
+                                               xdf = x_mat, ydf = y_mat,
+                                               output_plot_path = yaml_input$out_path)
 
-  saveRDS(sig_genes_res$plot_df, paste0(yaml_input$out_path, 'plotSigGenes_data.RDS'))
-  ggplot2::ggsave(plot = sig_genes_res$plt, filename = paste0(yaml_input$out_path, 'plotSigGenes.pdf'), 
-  device = "pdf", width = 1.5 * length(ks), height = 7)
 
-
-  # ######### plot AUCs
-
-  er_model_eval_path = results_folder_files[which(str_detect(results_folder_files, pattern = "pipeline_step5"))]
-
-  er_model_eval = readRDS(er_model_eval_path)
-
-  er_model_eval$method = factor(er_model_eval$method, levels = c("plainER", "plainER_y",
-                                                                 "lasso", "lasso_y"))
-
-  evaltype = "auc"
-  if (names(er_model_eval)[2] == "corr") {
-    evaltype = "corr"
-  }
-  boxplot = ggpubr::ggboxplot(er_model_eval, x = "method", y = evaltype, palette = "npg",
-                      fill = "method" ) +
-    ggpubr::stat_compare_means(comparisons = list(c("plainER", "plainER_y"),
-                                          c("lasso", "lasso_y")))
-
-  ggplot2::ggsave(plot = boxplot, filename = paste0(yaml_input$out_path, 'auc_boxplot.png'))
+  # ######### plot performance
+  JishnuLabTools::plot_performance(results_folder)
 }
