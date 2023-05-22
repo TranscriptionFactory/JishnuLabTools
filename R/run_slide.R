@@ -81,5 +81,5 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
 
 
   # ######### plot performance
-  JishnuLabTools::plot_performance(results_folder)
+  JishnuLabTools:::plot_performance(results_folder)
 }
