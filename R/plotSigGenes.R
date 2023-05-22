@@ -44,7 +44,7 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
 
   cdf$names_anno = paste0(cdf$names, cdf$loading_anno)
 
-  plt = cdf %>% ggplot2::ggplot(., aes(x = factor(fac), y = heights, label = names_anno)) +
+  plt = cdf %>% ggplot2::ggplot(., aes(x = factor(fac), y = heights, label = names)) +
     ggplot2::geom_text(aes(color = factor(color))) +
     ggplot2::scale_color_manual(values = c("blue", "red"), guide = "none") + theme_void() +
     ggplot2::theme(axis.text.x = element_text(), axis.title.x = element_text(),
