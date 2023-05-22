@@ -24,7 +24,7 @@ plot_performance = function(path_to_results, save_plot = T) {
                                                   c("lasso", "lasso_y")))
 
   if ( save_plot ) {
-    ggplot2::ggsave(plot = boxplot, filename = paste0(yaml_input$out_path, 'auc_boxplot.png'))
+    ggplot2::ggsave(plot = boxplot, filename = paste0(path_to_results, 'auc_boxplot.png'))
   }
   return( boxplot )
 }
