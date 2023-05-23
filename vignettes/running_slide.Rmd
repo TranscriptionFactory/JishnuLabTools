@@ -86,6 +86,7 @@ JishnuLabTools::run_slide(yaml_path = 'path_to_yaml_file_that_you_used_to_run_ER
 -   `slide_res` A list of the significant latent factors: marginal vars (non-interacting), interaction vars, interactions.
 -   `z_mat.csv` The latent factor Z matrix.
 -   `plotSigGenes.png` The significant genes (by latent factor loading and spearman correlation to Y values), for each significant latent factor.
+    -   **note, the red is associated with high y-value and the blue is associated with low y-value. So if you were looking at RNAseq data for binary classification, red = more transcript in the group encoded as 1, and blue is more transcript in the group encoded as 0.**
 -   `plotSigGenes_data.RDS` The data used the plot the png.
 -   `auc_boxplot.png` Re-plots the ER results as a boxplot with p-values
 

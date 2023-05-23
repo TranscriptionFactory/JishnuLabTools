@@ -422,7 +422,13 @@ marginal vars (non-interacting), interaction vars, interactions.</li>
 <li><code>z_mat.csv</code> The latent factor Z matrix.</li>
 <li><code>plotSigGenes.png</code> The significant genes (by latent
 factor loading and spearman correlation to Y values), for each
-significant latent factor.</li>
+significant latent factor.
+<ul>
+<li><strong>note, the red is associated with high y-value and the blue
+is associated with low y-value. So if you were looking at RNAseq data
+for binary classification, red = more transcript in the group encoded as
+1, and blue is more transcript in the group encoded as 0.</strong></li>
+</ul></li>
 <li><code>plotSigGenes_data.RDS</code> The data used the plot the
 png.</li>
 <li><code>auc_boxplot.png</code> Re-plots the ER results as a boxplot
