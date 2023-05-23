@@ -3,6 +3,9 @@
 ## See the (properly formatted) HTML vignette
 https://htmlpreview.github.io/?https://github.com/TranscriptionFactory/JishnuLabTools/blob/main/running_ER_on_cluster.html
 
+## vignette for SLIDE
+https://htmlpreview.github.io/?https://github.com/TranscriptionFactory/JishnuLabTools/blob/main/running_slide.html
+
 
 ### Mostly tools for running Essential Regression (ER) and Significant Latent Factor Interaction Discovery and Exploration (SLIDE) 
 
