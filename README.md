@@ -14,7 +14,7 @@ Read the publications:
 
 2. **SLIDE**
   - (preprint) https://www.biorxiv.org/content/10.1101/2022.11.25.518001v1.full.pdf
-  - Github: https://github.com/jishnu-lab/SLIDEpre
+  - Github: https://github.com/jishnu-lab/SLIDE
 
 
 
