@@ -55,8 +55,8 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
   if ( !is.null(output_plot_path) ) {
 
     saveRDS(cdf, paste0(output_plot_path, 'plotSigGenes_data.RDS'))
-    ggplot2::ggsave(plot = plt, filename = paste0(output_plot_path, 'plotSigGenes.pdf'),
-                    device = "pdf", width = 1.5 * length(ks), height = 7)
+    ggplot2::ggsave(plot = plt, filename = paste0(output_plot_path, 'plotSigGenes.png'),
+                    device = "png", width = 1.5 * length(ks), height = 7)
   }
 
   return(list("plt" = plt, "plot_df" = cdf))

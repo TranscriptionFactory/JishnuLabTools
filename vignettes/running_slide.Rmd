@@ -1,0 +1,92 @@
+---
+title: "Running Slide"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+#### SLIDE paper:
+
+(preprint) <https://www.biorxiv.org/content/10.1101/2022.11.25.518001v1.full.pdf>
+
+Essential Regression is a linear model - to extend this model and account for non-linear relationships, we can use SLIDE. The first step of running SLIDE is to run Essential Regression. SLIDE then uses the latent factors to:
+
+-   determine the significant latent factors using a knockoff approach
+-   model interactions between latent factors
+
+The SLIDE package is great and the functions I use to run SLIDE are basically just wrappers that plot things.
+
+### Running SLIDE
+
+The SLIDE package is a dependency of JishnuLabTools and should be loaded when you load this package.
+
+As stated above, the first step to running SLIDE is running ER
+
+## Step 1: Run ER
+
+```{r running_er, include = T, eval = F}
+
+library(devtools)
+library(doParallel)
+library(foreach)
+library(tidyverse)
+
+# if need to install
+devtools::install_github(repo = "TranscriptionFactory/JishnuLabTools", force = F, dependencies = T)
+
+library(JishnuLabTools)
+
+cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
+if(is.na(cores)) cores <- detectCores()
+# if(!is.na(cores) & cores > 1) cores <- cores
+registerDoParallel(cores)
+cat('number of cores using', cores, '. . .\n')
+
+
+yaml_path = 'path_to_your_yaml_file.yaml'
+
+# run Essential Regression
+EssReg::pipelineER3(yaml_path)
+```
+
+## Step 2: Run SLIDE
+
+Use the same yaml file that you used to generate the ER results (SLIDE requires some of the output files from ER + the input X/Y dataframes)
+
+The output will be placed in the output folder specified in the yaml path.
+
+#### run_slide
+
+For simple analysis of ER results, we just want to know the significant latent factors and don't care about interactions, so we set `do_interacts = F`
+
+The `spec` parameter is a threshold for latent factor significance - higher spec = more stringent, fewer significant latent factors and vice verse.
+
+The `do_interacts` and `spec` arguments are arguments for SLIDE.
+
+```{r running_slide, include = T, eval = F}
+
+JishnuLabTools::run_slide(yaml_path = 'path_to_yaml_file_that_you_used_to_run_ER.yaml', 
+                          spec = 0.1, do_interacts = F)
+```
+
+#### Output:
+
+-   `sig_genes.RDS` A list of the significant latent factors and associated genes + correlation and latent factor loading information.
+-   `slide_res` A list of the significant latent factors: marginal vars (non-interacting), interaction vars, interactions.
+-   `z_mat.csv` The latent factor Z matrix.
+-   `plotSigGenes.png` The significant genes (by latent factor loading and spearman correlation to Y values), for each significant latent factor.
+-   `plotSigGenes_data.RDS` The data used the plot the png.
+-   `auc_boxplot.png` Re-plots the ER results as a boxplot with p-values
+
+*the main output you'll want for SLIDE with no interactions is the `plotSigGenes.png` and `pltoSigGenes_data.RDS`. These are processed SLIDE results*
