@@ -1,6 +1,10 @@
 #' @export
-run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_interacts = F) {
+run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_interacts = F, cores = cores) {
 
+  # check if we've registered parallel cores
+  running_parallel = exists(x = 'cores')
+  
+  
   if ( !is.null(loaded_yaml)) {
     yaml_input = loaded_yaml
   } else if ( !is.null(yaml_path)) {
@@ -50,7 +54,7 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
   }
 
   slide_res = SLIDE::SLIDE(z_mat, y_mat, method = 4, do_interacts = do_interacts, betas = NULL, top_prop = NULL, marginals = NULL,
-                    spec = spec, fdr = 0.1, niter = 5000, elbow = FALSE, f_size = f_size_val, parallel = T, ncore = cores)
+                    spec = spec, fdr = 0.1, niter = 5000, elbow = FALSE, f_size = f_size_val, parallel = running_parallel, ncore = cores)
 
   saveRDS(slide_res, paste0(yaml_input$out_path, 'slide_res.RDS'))
 
