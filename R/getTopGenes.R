@@ -104,7 +104,7 @@ getTopGenes = function(er_res, ks, x, y) {
     top <- df[1:num_genes, ]
     df <- df[order(-df$AUCs), ]
     bot <- df[1:num_genes, ]
-    final <- rbind(top, bot)
+    final <- unique(rbind(top, bot))
     temp[[i]] <- final
   }
   return(temp)
