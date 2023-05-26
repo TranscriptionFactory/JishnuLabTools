@@ -3,6 +3,7 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
 
   # check if we've registered parallel cores
   running_parallel = exists(x = 'cores')
+  cores = ifelse(running_parallel, cores, NULL)
   
   
   if ( !is.null(loaded_yaml)) {
