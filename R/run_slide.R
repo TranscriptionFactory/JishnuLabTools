@@ -18,10 +18,10 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
   results_folder_files = list.files(results_folder, full.names = T)
 
   # er results
-  if(all(which(str_detect(results_folder_files, pattern = "final_"))) == F) {
+  if(all(which(stringr::str_detect(results_folder_files, pattern = "final_"))) == F) {
     return()
   }
-  er_results_path = results_folder_files[which(str_detect(results_folder_files, pattern = "final_delta_"))]
+  er_results_path = results_folder_files[which(stringr::str_detect(results_folder_files, pattern = "final_delta_"))]
 
   er_results = readRDS(er_results_path)
 
