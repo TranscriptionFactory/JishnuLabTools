@@ -1,7 +1,7 @@
 #' @export
 plotSigGenes = function(sig_genes = NULL, er_input = NULL,
                         slide_res = NULL, xdf = NULL, ydf = NULL,
-                        output_plot_path = NULL) {
+                        output_plot_path = NULL, num_sig_genes = 20) {
 
 
   sdf = JishnuLabTools:::safely_load_obj_from_path(sig_genes)
@@ -31,7 +31,7 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
   for (s in 1:length(sdf)) {
     temp = sdf[[s]]
 
-    num_to_plot = ifelse(nrow(temp) < 20, nrow(temp), 20)
+    num_to_plot = ifelse(nrow(temp) < num_sig_genes, nrow(temp), num_sig_genes)
     max_num_to_plot = ifelse(num_to_plot > max_num_to_plot, num_to_plot, max_num_to_plot)
 
     temp$heights = seq(1, num_to_plot)
@@ -44,15 +44,22 @@ plotSigGenes = function(sig_genes = NULL, er_input = NULL,
 
   cdf$names_anno = paste0(cdf$names, cdf$loading_anno)
 
+  # get average length of each of the feature names
+  avg_feature_length = mean(stringr::str_length(cdf$names))
+
+
   plt = cdf %>% ggplot2::ggplot(., aes(x = factor(fac), y = heights, label = names)) +
     ggplot2::geom_text(aes(color = factor(color))) +
     ggplot2::scale_color_manual(values = c("blue", "red"), guide = "none") + theme_void() +
     ggplot2::theme(axis.text.x = element_text(), axis.title.x = element_text(),
           axis.title.y = element_text(angle = 90)) +
-    ggplot2::xlab("Latent Factor") + ylab("Genes Associated with Latent Factor Cluster") + ggplot2::ylim(0, 20) +
+    ggplot2::xlab("Latent Factor") + ylab("Genes Associated with Latent Factor Cluster") + ggplot2::ylim(0, num_sig_genes) +
     ggplot2::ggtitle("Genes Associated with Latent Factor")
 
+
+
   if ( !is.null(output_plot_path) ) {
+
 
     saveRDS(cdf, paste0(output_plot_path, 'plotSigGenes_data.RDS'))
     ggplot2::ggsave(plot = plt, filename = paste0(output_plot_path, 'plotSigGenes.png'),

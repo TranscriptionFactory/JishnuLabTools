@@ -1,6 +1,6 @@
 
 #' @export
-getTopGenes = function(er_res, ks, x, y, num_genes = 10) {
+getTopGenes = function(er_res, ks, x, y, num_genes = 20) {
   A <- as.matrix(er_res$A[, ks])
   gene_names <- colnames(x)
   temp <- NULL
@@ -22,10 +22,8 @@ getTopGenes = function(er_res, ks, x, y, num_genes = 10) {
     color <- dplyr::recode(signs, "-1" = "Blue", "1"= "Red")
     df <- data.frame(names, A_loading, AUCs, corrs, color)
 
-    num_genes = ifelse(num_genes > 0, num_genes, 10)
-#     if( nrow(df) < 10 ) {
-#       num_genes = nrow(df) / 2
-#     }
+    num_genes = ifelse(round(num_genes/2) > 1, round(num_genes/2), 10)
+
     df <- df[order(-df$A_loading), ]
     top <- df[1:num_genes, ]
     df <- df[order(-df$AUCs), ]
