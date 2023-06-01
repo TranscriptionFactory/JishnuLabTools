@@ -2,6 +2,8 @@
 clean_data = function(xdata, ydata, edit_data = T,
                       col_var_quantile_filter = 0,
                       row_var_quantile_filter = 0,
+                      col_sparsity_min_nonzero = 0,
+                      row_sparsity_min_nonzero = 0,
                       remove_zero_median_cols = F,
                       remove_zero_median_rows = F,
                       scale_zeroes_directly = 0,
@@ -25,6 +27,14 @@ clean_data = function(xdata, ydata, edit_data = T,
   }
 
   if (mode > 0) {
+    
+    if (col_sparsity_min_nonzero == 0 && remove_zero_median_cols == T) {
+      col_sparsity_min_nonzero = 0.5
+    }
+    
+    if (row_sparsity_min_nonzero == 0 && remove_zero_median_rows == T) {
+      row_sparsity_min_nonzero = 0.5
+    }
 
     if (remove_mito_ribo) {
       xdata = JishnuLabTools::remove_mitochondrial_ribosomal_genes(xdata)
@@ -51,12 +61,12 @@ clean_data = function(xdata, ydata, edit_data = T,
       xdata <- xdata[, -zero_sd]
     }
 
-    if (remove_zero_median_cols) {
+    if (col_sparsity_min_nonzero > 0) {
 
-      zero_med_cols = which(apply(xdata, 2, median) == 0)
-
-      if ( length(zero_med_cols) > 0 ) {
-        xdata = xdata[, -zero_med_cols]
+      col_nonzero = which(apply(xdata, 2, function(x) length(which(x != 0)) / length(x)) > col_sparsity_min_nonzero)
+                                
+      if ( length(col_nonzero) > 0 ) {
+        xdata = xdata[, -col_nonzero]
       }
     }
 
@@ -71,15 +81,15 @@ clean_data = function(xdata, ydata, edit_data = T,
       }
     }
 
-    if (remove_zero_median_rows) {
+    if (row_sparsity_min_nonzero > 0) {
       # remove empty rows last
-      empty_rows <- which(apply(xdata, 1, median) == 0)
+      row_nonzero = which(apply(xdata, 1, function(x) length(which(x != 0)) / length(x)) > row_sparsity_min_nonzero)
 
       # check if we need to remove any rows
-      if (length(empty_rows) > 0) {
+      if (length(row_nonzero) > 0) {
         # remove rows
-        xdata <- xdata[-empty_rows,]
-        ydata <- ydata[-empty_rows]
+        xdata <- xdata[-row_nonzero,]
+        ydata <- ydata[-row_nonzero]
       }
     }
 
