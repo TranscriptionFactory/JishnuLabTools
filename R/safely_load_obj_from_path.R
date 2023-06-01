@@ -17,18 +17,15 @@ safely_load_obj_from_path = function(inputvar) {
       # same thing
       return(cbind.data.frame(y = check_for_df_or_path(yaml_input$y_path)),
              check_for_df_or_path(yaml_input$x_path))
-    }
-
-
-    # check if input is an object or path
-    if (is.matrix(inputvar) | is.data.frame(inputvar) | is.list(inputvar)) {
+    } else if (is.matrix(inputvar) | is.data.frame(inputvar) | is.list(inputvar)) {
+      # check if input is an object or path
       # object passed
       return(inputvar)
     } else if (typeof(inputvar) == "character") {
       # path passed
       res = tryCatch({
         # try to read as an RDS
-        as.data.frame(readRDS(inputvar))
+        return(as.data.frame(readRDS(inputvar)))
       }, error = function(e) {
         # assume its a matrix
         mat = tryCatch({
