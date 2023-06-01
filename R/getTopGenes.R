@@ -22,7 +22,7 @@ getTopGenes = function(er_res, ks, x, y, num_genes = 20) {
     color <- dplyr::recode(signs, "-1" = "Blue", "1"= "Red")
     df <- data.frame(names, A_loading, AUCs, corrs, color)
 
-    #num_genes = ifelse(round(num_genes/2) > 1, round(num_genes/2), 10)
+    num_genes = ifelse(ceiling(num_genes/2) > 1, ceiling(num_genes/2), 10)
 
     df <- df[order(-df$A_loading), ]
     top <- df[1:num_genes, ]
