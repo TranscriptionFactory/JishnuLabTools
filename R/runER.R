@@ -1,8 +1,17 @@
 #' @export
-runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = F) {
+runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = T,
+                lambdas = NULL, deltas = NULL, ...) {
 
+  # check lambdas and deltas
+  if (!is.null(lambdas) && any(lambdas) <= 0) {
+    lambdas = c(1.0, 0.1)
+  }
+  
+  if (!is.null(deltas) && any(deltas) <= 0) {
+   deltas = c(0.1, 0.01) 
+  }
   if (cleanData) {
-    cleaned = JishnuLabTools::load_data(yaml = yaml_path)
+    cleaned = JishnuLabTools::load_data(yaml = yaml_path, ...)
     yaml_path = cleaned$yaml
   }
   er_input = yaml::yaml.load_file(yaml_path)
@@ -10,19 +19,18 @@ runER = function(yaml_path, coarseGrid = F, cleanData = T, removeCleanedData = F
 
   if (coarseGrid) {
     er_input$k = JishnuLabTools::set_k_folds(er_input)
-
-    if (length(er_input$delta) == 1) {
+      
+    if (is.null(deltas) && length(er_input$delta) == 1) {
       # default deltas and lambdas if we aren't passed list of deltas
-      lambdas = c(1.0, 0.1)
       deltas = c(0.25, 0.1, 0.05, 0.01)
-    } else {
+    } else if (is.null(deltas)) {
       # use the passed list of deltas
       deltas = er_input$delta
     }
 
     # check if we have a list of lambas (we should test more than 1, but dont
     # need to test many)
-    if (length(er_input$lambda) > 1) {
+    if (is.null(lambdas) && length(er_input$lambda) > 1) {
       # set lambdas to this list
       lambdas = er_input$lambda
       # otherwise we just use the lambdas defined above
