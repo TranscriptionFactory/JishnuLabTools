@@ -77,6 +77,7 @@ load_data = function(obj = NULL, yaml, create_dir = T,
         write.csv(x, xpath)
         write.csv(y, ypath)
         return(list(x = x, y = y, yaml = new_yaml_path))
+      }
 
   } else {
     # error
