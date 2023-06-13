@@ -50,7 +50,7 @@ load_data = function(obj = NULL, yaml, create_dir = T,
 
         if ( !(is.list(cleaned) && all(c("x", "y") %in% names(cleaned))) ){
           # cleaning function didn't return expected values
-          cat("cleaning function didn't return expected values - expecting list with names = c("x", "y") where x = xdata and y = ydata \n")
+          cat("cleaning function didn't return expected values - expecting list with names = c('x', 'y') where x = xdata and y = ydata \n")
           return()
         }
       }
