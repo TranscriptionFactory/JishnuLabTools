@@ -36,40 +36,48 @@ load_data = function(obj = NULL, yaml, create_dir = T,
   }
 
 
-  if (! is.null(df)) {
+  if ( !is.null(df)) {
     # shuffle rows
     df = df[sample(1:nrow(df)),]
 
     x = as.matrix(df[, -1])
     y = as.matrix(df[, 1])
 
-    # will just remove columns with zero standard deviation.
-    # to remove based on quantile, and set quantile
+      # will just remove columns with zero standard deviation.
+      # to remove based on quantile, and set quantile
+      if ( !is.null(clean_data_function) ) {
+        cleaned = clean_data_function(xdata = x, ydata = y, ...)
 
-    cleaned = clean_data_function(xdata = x, ydata = y, ...)
+        if ( !(is.list(cleaned) && all(c("x", "y") %in% names(cleaned))) ){
+          # cleaning function didn't return expected values
+          cat("cleaning function didn't return expected values - expecting list with names = c("x", "y") where x = xdata and y = ydata \n")
+          return()
+        }
+      }
 
-    if ( !(is.list(cleaned) && all(c("x", "y") %in% names(cleaned))) ){
-      # cleaning function didn't return expected values
-      cat("cleaning function didn't return expected values - expecting list with x = xdata and y = ydata \n")
-      return()
-    }
+      # we are going to save these edited data to our output folder
+      xpath = paste0(loaded_yaml$out_path, "x.csv")
+      ypath = paste0(loaded_yaml$out_path, "y.csv")
 
-    # we are going to save these edited data to our output folder
-    xpath = paste0(loaded_yaml$out_path, "x.csv")
-    ypath = paste0(loaded_yaml$out_path, "y.csv")
-    write.csv(cleaned$x, xpath)
-    write.csv(cleaned$y, ypath)
+      # update yaml parameters with new paths
+      loaded_yaml$x_path = xpath
+      loaded_yaml$y_path = ypath
 
-    # update yaml parameters with new paths
+      new_yaml_path = paste0(loaded_yaml$out_path, "yaml_parameters.yaml")
+      # save this yaml file for reference
+      yaml::write_yaml(loaded_yaml, new_yaml_path)
 
-    loaded_yaml$x_path = xpath
-    loaded_yaml$y_path = ypath
+      if ( !is.null(clean_data_function) ) {
+        write.csv(cleaned$x, xpath)
+        write.csv(cleaned$y, ypath)
+        return(list(x = cleaned$x, y = cleaned$y, yaml = new_yaml_path))
+      } else {
+        # return original data
+        cat(" \n\n\n\n\n ***************************************************** no clean data function specified. saving unchanged X and Y to csv in output directory ***************************************************** \n\n\n\n\n ")
+        write.csv(x, xpath)
+        write.csv(y, ypath)
+        return(list(x = x, y = y, yaml = new_yaml_path))
 
-    new_yaml_path = paste0(loaded_yaml$out_path, "yaml_parameters.yaml")
-    # save this yaml file for reference
-    yaml::write_yaml(loaded_yaml, new_yaml_path)
-
-    return(list(x = cleaned$x, y = cleaned$y, yaml = new_yaml_path))
   } else {
     # error
     return()
