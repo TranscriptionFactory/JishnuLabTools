@@ -25,7 +25,7 @@ safely_load_obj_from_path = function(inputvar) {
       # path passed
       res = tryCatch({
         # try to read as an RDS
-        return(as.data.frame(readRDS(inputvar)))
+        as.data.frame(readRDS(inputvar))
       }, error = function(e) {
         # assume its a matrix
         mat = tryCatch({
