@@ -1,7 +1,7 @@
 #' @export
 plotSigGenes = function(sig_genes = NULL, er_input = NULL,
                         slide_res = NULL, xdf = NULL, ydf = NULL,
-                        output_plot_path = NULL, num_sig_genes = 20) {
+                        output_plot_path = NULL, num_sig_genes = 20, ...) {
 
 
   sdf = JishnuLabTools:::safely_load_obj_from_path(sig_genes)
