@@ -4,8 +4,8 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
 #   # check if we've registered parallel cores
 #   running_parallel = exists(x = 'cores')
 #   cores = ifelse(running_parallel, cores, NULL)
-  
-  
+
+
   if ( !is.null(loaded_yaml)) {
     yaml_input = loaded_yaml
   } else if ( !is.null(yaml_path)) {
@@ -79,7 +79,7 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
 
 
   # get significant genes plot
-  sig_genes_res = JishnuLabTools::plotSigGenes(sig_genes = sig_genes,
+  sig_genes_res = JishnuLabTools:::plotSigGenes(sig_genes = sig_genes,
                                                er_input = er_results, slide_res = slide_res,
                                                xdf = x_mat, ydf = y_mat,
                                                output_plot_path = yaml_input$out_path)
