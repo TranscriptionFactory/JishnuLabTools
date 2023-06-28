@@ -65,7 +65,7 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
 
   ks = sapply(marg_vars, function(x) as.double(gsub("z", "", x, perl = T)))
 
-  sig_genes = NULL
+  sig_genes = list()
 
   if (length(ks) > 0) {
     for (i in 1:length(ks)){
