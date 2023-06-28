@@ -1,5 +1,5 @@
 
-plotSigGenes = function(slide_results, output_plot_path = NULL,
+plotSigGenes_SLIDEHelper = function(slide_results, output_plot_path = NULL,
                         annotate_anchors = F) {
 
   slide_marginals = slide_results$feature_res
