@@ -47,7 +47,7 @@ Imports:
     ROCR,
     EssReg,
     SLIDE
-Remotes: Hanxi-002/EssReg, jishnu-lab/SLIDE
+Remotes: Hanxi-002/EssReg, jishnu-lab/SLIDE, merliseclyde/BAS
 Suggests: 
     knitr,
     rmarkdown
