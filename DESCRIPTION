@@ -42,7 +42,6 @@ Imports:
     optparse,
     ggpubr,
     e1071,
-    BAS,
     gmp,
     ROCR,
     EssReg,
