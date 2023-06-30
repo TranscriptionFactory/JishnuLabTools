@@ -28,6 +28,7 @@ Imports:
     MASS,
     matrixcalc,
     methods,
+    Matrix,
     pheatmap,
     stringr,
     pls,
@@ -39,6 +40,10 @@ Imports:
     Matrix,
     optparse,
     ggpubr,
+    e1071,
+    BAS,
+    gmp,
+    ROCR,
     EssReg,
     SLIDE
 Remotes: Hanxi-002/EssReg, jishnu-lab/SLIDE
