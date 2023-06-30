@@ -1,7 +1,7 @@
 Package: JishnuLabTools
 Type: Package
 Title: Tools for Jishnu Lab Models
-Version: 0.1.0
+Version: 1.0.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
@@ -16,6 +16,7 @@ Imports:
     cluster,
     doParallel,
     dplyr,
+    doRNG,
     foreach,
     ggplot2,
     glmnet,
