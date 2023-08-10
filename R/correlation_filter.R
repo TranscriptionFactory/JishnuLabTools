@@ -15,7 +15,7 @@ correlation_filter = function(data, correlation_threshold = 0.8,
   # for each column, figure out how many variables are correlated with this variable
   # e.g. for correlation_threshold = 0.8, how many variables have a correlation > 0.8
   # with this variable
-  df_cor_count = apply(df_cor, 2, function(x) length(which(x > 0.8)))
+  df_cor_count = apply(df_cor, 2, function(x) length(which(x > correlation_threshold)))
 
   # from this, filter out the top quantile (variables with most correlations)
   # from the original dataframe
