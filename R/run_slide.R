@@ -50,7 +50,7 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
   if (f_size_val > 100) {
     f_size_val = 100
   } else if (f_size_val == 1) {
-    cat("only one significant factor, skipping\n")
+    cat("only one latent factor, skipping\n")
     return()
   }
 
@@ -62,6 +62,11 @@ run_slide = function(yaml_path = NULL, loaded_yaml = NULL, spec = 0.1, do_intera
   write.csv(z_mat, paste0(yaml_input$out_path, 'z_mat.csv'), row.names = T, col.names = T)
 
   marg_vars = slide_res$marginal_vars
+
+  if (length(marg_vars) == 0) {
+    cat("no significant latent factors, skipping\n")
+    return()
+  }
 
   ks = sapply(marg_vars, function(x) as.double(gsub("z", "", x, perl = T)))
 
