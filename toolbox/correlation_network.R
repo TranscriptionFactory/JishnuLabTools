@@ -5,14 +5,6 @@ library(qgraph) ## for making the network
 
 create_corr_network = function(er_run_path, x_path, y_path) {
 
-
-  comp = stringr::str_c(stringr::str_split(er_run_path, pattern = "/")[[1]][9:11],
-                        collapse = " ")
-
-  color_code = ifelse(stringr::str_detect(comp, pattern = "AvS"),
-                      "\nPurple = increased in Smoke\nGreen = increased in Air\ngray = ambiguous\nlabel = LFC",
-                      "\nPurple = increased in DR4\nGreen = increased in WT\ngray = ambiguous\nlabel = LFC")
-
   x = read.csv(x_path, row.names = 1)
 
   y = read.csv(y_path)
