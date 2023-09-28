@@ -22,11 +22,7 @@ create_corr_network = function(er_run_path, x_path, y_path) {
 
   for (f in unique(sig_genes$fac)) {
 
-        x_gene = x[, (sig_genes %>% filter(fac == f))$names]
-
-    col_auc = round(apply(x_gene, 2, function(x) glmnet:::auc(as.numeric(y), as.matrix(x))), 2)
-
-    temp_cols = ifelse(col_auc > 0.55, "#40006D", ifelse(col_auc < 0.45, "#59A14F", "lightgray"))
+    x_gene = x[, (sig_genes %>% filter(fac == f))$names]
 
     x_temp = cor(x_gene)
 
