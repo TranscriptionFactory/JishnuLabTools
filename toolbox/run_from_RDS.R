@@ -11,10 +11,10 @@ if(is.na(cores)) cores <- detectCores()
 registerDoParallel(cores)
 cat('number of cores using', cores, '. . .\n')
 
-unregister_dopar <- function() {
-  env <- foreach:::.foreachGlobals
-  rm(list=ls(name=env), pos=env)
-}
+# unregister_dopar <- function() {
+#   env <- foreach:::.foreachGlobals
+#   rm(list=ls(name=env), pos=env)
+# }
 
 getModelName = function(pth) {
   fname = tail(str_split(pth, pattern = "/")[[1]], 1)
@@ -190,7 +190,7 @@ for (ind1 in 1:length(lbds)) {
 
     yaml::write_yaml(er_input, yaml_path)
 
-    unregister_dopar()
+    # unregister_dopar()
     registerDoParallel(cores)
   }
 }
