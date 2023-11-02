@@ -63,7 +63,7 @@ clean_data = function(xdata, ydata, edit_data = T,
 
     if (col_sparsity_min_nonzero > 0) {
 
-      col_nonzero = which(apply(xdata, 2, function(x) length(which(x != 0)) / length(x)) > col_sparsity_min_nonzero)
+      col_nonzero = which(apply(xdata, 2, function(x) length(which(x != 0)) / length(x)) >= col_sparsity_min_nonzero)
                                 
       if ( length(col_nonzero) > 0 ) {
         xdata = xdata[, -col_nonzero]
@@ -83,7 +83,7 @@ clean_data = function(xdata, ydata, edit_data = T,
 
     if (row_sparsity_min_nonzero > 0) {
       # remove empty rows last
-      row_nonzero = which(apply(xdata, 1, function(x) length(which(x != 0)) / length(x)) > row_sparsity_min_nonzero)
+      row_nonzero = which(apply(xdata, 1, function(x) length(which(x != 0)) / length(x)) >= row_sparsity_min_nonzero)
 
       # check if we need to remove any rows
       if (length(row_nonzero) > 0) {
