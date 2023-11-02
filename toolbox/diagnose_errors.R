@@ -210,7 +210,6 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
 
 
-  error_log$er_results = er_results
   # check for previously saved RDS error log file
   if (is.null(error_file_output_path)) {
     error_file_output_path = getwd()
