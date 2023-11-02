@@ -205,8 +205,9 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
   }
 
 
-  error_log$er_results = withCallingHandlers(check_initial_ER_steps(yaml_args),
-                                   error = function(e) print(sys.calls()))
+  error_log$er_results = check_initial_ER_steps(yaml_args)
+                   # withCallingHandlers(check_initial_ER_steps(yaml_args),
+                                   # error = function(e) print(sys.calls()))
 
 
 
