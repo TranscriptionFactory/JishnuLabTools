@@ -55,6 +55,10 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     col_cv = apply(data, 2, function(x) sd(x)/mean(x))
     col_cv_hist = hist(col_cv, xlab = "Coef. Variation")
 
+    if (is.null(error_messages)) {
+      error_messages = c("\n No Data Errors \n")
+    }
+
     return(list(error_messages = error_messages,
                 col_var_hist = col_var_hist,
                 col_cv_hist = col_cv_hist))
@@ -65,7 +69,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
   # load x,y
   error_log$check_data = check_data(x, y)
 
-  print(error_log$check_data$error_messages)
+  cat(error_log$check_data$error_messages)
 
   check_initial_ER_steps = function(yaml_args = NULL, yaml_path = NULL, x = NULL, y = NULL) {
 
@@ -201,7 +205,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
   }
 
 
-  error_log$er_results = withCallingHandlers(check_initial_ER_steps(yaml_path),
+  error_log$er_results = withCallingHandlers(check_initial_ER_steps(yaml_args),
                                    error = function(e) print(sys.calls()))
 
 
