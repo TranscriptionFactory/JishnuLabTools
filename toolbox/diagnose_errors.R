@@ -67,7 +67,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     col_variance = apply(data, 2, var)
     col_var_hist = hist(col_variance, xlab = "Column-wise Variance")
     # data_messages = c(data_messages, paste0("Column-wise variance :", col_var_hist$density[1]/sum(col_var_hist$density), "% of variables have a variance below ", col_var_hist$breaks[2], "\n"))
-    
+
     col_cv = apply(data, 2, function(x) sd(x)/mean(x))
     col_cv_hist = hist(col_cv, xlab = "Column-wise Coef. Variation")
     # data_messages = c(data_messages, paste0("Column-wise variance :", col_var_hist$density[1]/sum(col_var_hist$density), "% of variables have a variance below ", col_var_hist$breaks[2], "\n"))
@@ -222,12 +222,12 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
   }
 
- cat("\nStarting plainER \n")
+  cat("\nStarting plainER \n")
 
   withCallingHandlers(expr = (er_res <<- check_initial_ER_steps(yaml_args)),
-                                            error = function(e) {
-                                              print(sys.calls())
-                                            })
+                      error = function(e) {
+                        print(sys.calls())
+                      })
 
   results_log$plainER = er_res
 
@@ -239,10 +239,10 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     dir.create(error_file_output_path, recursive = T)
   }
 
-  error_file_output_path = paste0(error_file_output_path, "/ER_results_log.RDS")
+  plainER_output_path = paste0(error_file_output_path, "/ER_results_log.RDS")
 
-  cat("\nSaving results log to ", error_file_output_path, "\n")
-  saveRDS(results_log, error_file_output_path)
+  cat("\nSaving results log to ", plainER_output_path, "\n")
+  saveRDS(results_log, plainER_output_path)
 
   cat("\nStarting plainER with cross validation \n")
 
