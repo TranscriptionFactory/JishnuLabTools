@@ -227,7 +227,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
   results_log$plainER = er_res
 
-  cat("\nCompleted plainER (no cross validation). Saving results to ", error_file_output_path, "\n")
+  cat("\nCompleted plainER (no cross validation). Saving results in ", error_file_output_path, "\n")
 
   if (is.null(error_file_output_path)) {
     error_file_output_path = getwd()
@@ -237,12 +237,14 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
   error_file_output_path = paste0(error_file_output_path, "/ER_results_log.RDS")
 
-  cat("\nSaving error log to ", error_file_output_path, "\n")
+  cat("\nSaving results log to ", error_file_output_path, "\n")
   saveRDS(results_log, error_file_output_path)
 
   cat("\nStarting plainER with cross validation \n")
 
   pipeline3_output_path = paste0(error_file_output_path, "/pipeline3_error_stacktrace.txt")
+
+  cat("\nStarting pipeline3. Will output pipeline3 error messages to ", pipeline3_output_path, "\n")
 
   withCallingHandlers(EssReg::pipelineER3(yaml_path),
                       error = function(e) {
