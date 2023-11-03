@@ -1,5 +1,17 @@
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
 library(tidyverse)
 library(EssReg)
+library(doParallel)
+
+cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
+if(is.na(cores)) cores <- detectCores()
+# if(!is.na(cores) & cores > 1) cores <- cores
+registerDoParallel(cores)
+cat('number of cores using', cores, '. . .\n')
+
+yaml_path = args[1]
+
 
 ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NULL,
                            error_file_output_path = NULL) {
@@ -11,6 +23,8 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     yaml_args = yaml::yaml.load_file(yaml_path)
     yaml_x = as.matrix(read.csv(yaml_args$x_path, row.names = 1))
     yaml_y = as.matrix(read.csv(yaml_args$y_path, row.names = 1))
+
+    error_file_output_path = yaml_args$out_path
   } else if (is.null(yaml_args)) {
     yaml_args = list()
   }
@@ -122,7 +136,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     Gamma_hat[Gamma_hat < 0] <- 1e-2
 
     pred_result <- EssReg::prediction(y = y, x = x, sigma = sigma, A_hat = A_hat,
-                              Gamma_hat = Gamma_hat, I_hat = I_hat)
+                                      Gamma_hat = Gamma_hat, I_hat = I_hat)
 
     theta_hat <- pred_result$theta_hat
 
@@ -137,8 +151,8 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
       AI_hat <- abs(A_hat[I_hat, ]) ## just rows of pure variables
       sigma_bar_sup <- max(solve(crossprod(AI_hat), t(AI_hat)) %*% se_est[I_hat]) ## not sure what this does
       AJ <- EssReg::estAJDant(C_hat = C_hat, sigma_TJ = sigma_TJ,
-                      lambda = lambda * delta * sigma_bar_sup,
-                      se_est_J = sigma_bar_sup + se_est[-I_hat])
+                              lambda = lambda * delta * sigma_bar_sup,
+                              se_est_J = sigma_bar_sup + se_est[-I_hat])
 
       if (is.null(AJ)) {
         cat("\n Dantzig estimation failed\n")
@@ -154,8 +168,8 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
 
     res_beta <- EssReg::estBeta(y = y, x = x, sigma = sigma, A_hat = A_hat,
-                        C_hat = C_hat, Gamma_hat = Gamma_hat, I_hat = I_hat,
-                        I_hat_list = I_hat_list, alpha_level = yaml_args$alpha_level)
+                                C_hat = C_hat, Gamma_hat = Gamma_hat, I_hat = I_hat,
+                                I_hat_list = I_hat_list, alpha_level = yaml_args$alpha_level)
     beta_hat <- res_beta$beta_hat
     beta_conf_int <- res_beta$conf_int
     beta_var <- res_beta$beta_var
@@ -204,29 +218,41 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
   }
 
+  # error_log$plainER_res = withCallingHandlers(check_initial_ER_steps(yaml_args),
+  #                     error = function(e) {
+  #                       print(sys.calls())
+  #                     })
 
-  error_log$er_results = check_initial_ER_steps(yaml_args)
-                   # withCallingHandlers(check_initial_ER_steps(yaml_args),
-                                   # error = function(e) print(sys.calls()))
+#  error_log$plainER_res = withCallingHandlers(check_initial_ER_steps(yaml_args),
+  withCallingHandlers(expr = (er_res <<- check_initial_ER_steps(yaml_args)),
+                                            error = function(e) {
+                                              print(sys.calls())
+                                            })
 
+  error_log$plainER = er_res
 
+  # withCallingHandlers(EssReg::pipelineER3(yaml_path),
+  #                     error = function(e) {
+  #                       cprint(sys.calls())
+  #                     })
 
   # check for previously saved RDS error log file
   if (is.null(error_file_output_path)) {
     error_file_output_path = getwd()
   }
-  previously_saved_path = file.exists(error_file_output_path, pattern = "ER_ERROR_LOG_FILE.RDS", full.names = T)
 
-  if (length(previously_saved_path) > 0) {
-    error_main = readRDS(previously_saved_path)
-  } else {
-    error_main = list()
-    previously_saved_path = paste0(error_file_output_path, "/ER_ERROR_LOG_FILE.RDS")
-  }
+  # if (length(previously_saved_path) > 0) {
+  #   error_main = readRDS(previously_saved_path)
+  # } else {
+  #   error_main = list()
+  #   previously_saved_path = paste0(error_file_output_path, "/ER_ERROR_LOG_FILE.RDS")
+  # }
+  error_file_output_path = paste0(error_file_output_path, "/ER_ERROR_LOG_FILE.RDS")
 
-  error_main[[Sys.time()]] = error_log
-  cat("\nSaving error log to ", previously_saved_path, "\n")
-  saveRDS(error_main, previously_saved_path)
+  cat("\nSaving error log to ", error_file_output_path, "\n")
+  saveRDS(error_log, error_file_output_path)
 
-  return(error_main)
+  return(error_log)
 }
+
+ER_error_helper(yaml_path = yaml_path)
