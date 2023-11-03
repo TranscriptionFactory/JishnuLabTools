@@ -233,7 +233,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     dir.create(error_file_output_path, recursive = T)
   }
 
-  error_file_output_path = paste0(error_file_output_path, "/ER_results_log_FILE.RDS")
+  error_file_output_path = paste0(error_file_output_path, "/ER_results_log.RDS")
 
   cat("\nSaving error log to ", error_file_output_path, "\n")
   saveRDS(results_log, error_file_output_path)
