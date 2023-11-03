@@ -65,11 +65,11 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     }
 
     col_variance = apply(data, 2, var)
-    col_var_hist = hist(col_variance, xname = "Column-wise Variance")
+    col_var_hist = hist(col_variance, xlab = "Column-wise Variance")
     # data_messages = c(data_messages, paste0("Column-wise variance :", col_var_hist$density[1]/sum(col_var_hist$density), "% of variables have a variance below ", col_var_hist$breaks[2], "\n"))
     
     col_cv = apply(data, 2, function(x) sd(x)/mean(x))
-    col_cv_hist = hist(col_cv, xname = "Column-wise Coef. Variation")
+    col_cv_hist = hist(col_cv, xlab = "Column-wise Coef. Variation")
     # data_messages = c(data_messages, paste0("Column-wise variance :", col_var_hist$density[1]/sum(col_var_hist$density), "% of variables have a variance below ", col_var_hist$breaks[2], "\n"))
 
     if (is.null(error_messages)) {
