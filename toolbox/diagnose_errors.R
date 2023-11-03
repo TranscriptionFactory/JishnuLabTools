@@ -64,10 +64,10 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     }
 
     col_variance = apply(data, 2, var)
-    col_var_hist = hist(col_variance, xlab = "Variance")
+    col_var_hist = hist(col_variance, xname = "Column-wise Variance")
 
     col_cv = apply(data, 2, function(x) sd(x)/mean(x))
-    col_cv_hist = hist(col_cv, xlab = "Coef. Variation")
+    col_cv_hist = hist(col_cv, xname = "Column-wise Coef. Variation")
 
     if (is.null(error_messages)) {
       error_messages = c("\n No Data Errors \n")
