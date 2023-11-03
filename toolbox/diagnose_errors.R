@@ -49,6 +49,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
   check_data = function(x, y) {
 
     error_messages = c()
+    data_messages = c()
     data = as.matrix(apply(x, 2, as.numeric))
 
     if (any(is.na(data))) {
@@ -65,15 +66,18 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
     col_variance = apply(data, 2, var)
     col_var_hist = hist(col_variance, xname = "Column-wise Variance")
-
+    # data_messages = c(data_messages, paste0("Column-wise variance :", col_var_hist$density[1]/sum(col_var_hist$density), "% of variables have a variance below ", col_var_hist$breaks[2], "\n"))
+    
     col_cv = apply(data, 2, function(x) sd(x)/mean(x))
     col_cv_hist = hist(col_cv, xname = "Column-wise Coef. Variation")
+    # data_messages = c(data_messages, paste0("Column-wise variance :", col_var_hist$density[1]/sum(col_var_hist$density), "% of variables have a variance below ", col_var_hist$breaks[2], "\n"))
 
     if (is.null(error_messages)) {
       error_messages = c("\n No Data Errors \n")
     }
 
     return(list(error_messages = error_messages,
+                # data_messages = data_messages,
                 col_var_hist = col_var_hist,
                 col_cv_hist = col_cv_hist))
 
