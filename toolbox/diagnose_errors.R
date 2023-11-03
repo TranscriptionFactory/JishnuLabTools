@@ -17,7 +17,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
                            error_file_output_path = NULL) {
 
 
-  error_log = list()
+  results_log = list()
 
   if (!is.null(yaml_path) & file.exists(yaml_path)) {
     yaml_args = yaml::yaml.load_file(yaml_path)
@@ -81,9 +81,9 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
   # check data
   # load x,y
-  error_log$check_data = check_data(x, y)
+  results_log$check_data = check_data(x, y)
 
-  cat(error_log$check_data$error_messages)
+  cat(results_log$check_data$error_messages)
 
   check_initial_ER_steps = function(yaml_args = NULL, yaml_path = NULL, x = NULL, y = NULL) {
 
@@ -218,41 +218,36 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
 
   }
 
-  # error_log$plainER_res = withCallingHandlers(check_initial_ER_steps(yaml_args),
-  #                     error = function(e) {
-  #                       print(sys.calls())
-  #                     })
-
-#  error_log$plainER_res = withCallingHandlers(check_initial_ER_steps(yaml_args),
   withCallingHandlers(expr = (er_res <<- check_initial_ER_steps(yaml_args)),
                                             error = function(e) {
                                               print(sys.calls())
                                             })
 
-  error_log$plainER = er_res
+  results_log$plainER = er_res
 
-  # withCallingHandlers(EssReg::pipelineER3(yaml_path),
-  #                     error = function(e) {
-  #                       cprint(sys.calls())
-  #                     })
+  cat("\nCompleted plainER (no cross validation). Saving results to ", error_file_output_path, "\n")
 
-  # check for previously saved RDS error log file
   if (is.null(error_file_output_path)) {
     error_file_output_path = getwd()
+  } else if (!dir.exists(error_file_output_path)) {
+    dir.create(error_file_output_path, recursive = T)
   }
 
-  # if (length(previously_saved_path) > 0) {
-  #   error_main = readRDS(previously_saved_path)
-  # } else {
-  #   error_main = list()
-  #   previously_saved_path = paste0(error_file_output_path, "/ER_ERROR_LOG_FILE.RDS")
-  # }
-  error_file_output_path = paste0(error_file_output_path, "/ER_ERROR_LOG_FILE.RDS")
+  error_file_output_path = paste0(error_file_output_path, "/ER_results_log_FILE.RDS")
 
   cat("\nSaving error log to ", error_file_output_path, "\n")
-  saveRDS(error_log, error_file_output_path)
+  saveRDS(results_log, error_file_output_path)
 
-  return(error_log)
+  cat("\nStarting plainER with cross validation \n")
+
+  pipeline3_output_path = paste0(error_file_output_path, "/pipeline3_error_stacktrace.txt")
+
+  withCallingHandlers(EssReg::pipelineER3(yaml_path),
+                      error = function(e) {
+                        cat(sys.calls(), file = pipeline3_output_path, append = T)
+                      })
+
+  return(results_log)
 }
 
 ER_error_helper(yaml_path = yaml_path)
