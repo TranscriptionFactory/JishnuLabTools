@@ -61,7 +61,7 @@ ER_error_helper = function(x = NULL, y = NULL, yaml_args = NULL, yaml_path = NUL
     }
 
     if (any(apply(data, 2, sd) == 0)) {
-      error_messages = append(error_messages, "\n Columns with sd=0 \n")
+      error_messages = append(error_messages, "\n Columns with sd=0 at", which(apply(data,2,sd)==0), "\n")
     }
 
     col_variance = apply(data, 2, var)
