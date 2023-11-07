@@ -1,7 +1,10 @@
 
-
 test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr) {
   # sampling
+
+  cat("\n ********************************************************* \n")
+  in_args = as.list(match.call())
+  cat("\n using params delta =", delta, " k =", k, " thresh_fdr =", thresh_fdr, "\n")
 
   if ( !is.null(path_list) ) {
     x = as.matrix(read.csv(path_list[[1]], row.names = 1))
@@ -40,10 +43,11 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
   I_hat_list <- result_AI$pure_list
 
   if ( nrow(result_AI$AI) - length(result_AI$pure_vec) != ncol(sigma[, -result_AI$pure_vec]) ){
-    cat("\n error with clustering \n")
+    cat("\n error using these parameters \n")
     return()
   } else {
-    cat("\n dims are equal\n")
+    cat("\n dims are equal \n")
+    return()
   }
 
   C_hat <- EssReg::estC(sigma = sigma, AI = A_hat)
@@ -89,6 +93,6 @@ kfold_plainER_steps = function(k, ...) {
 
 
 
-kfold_plainER_steps(k = 2, delta = 0.1, thresh_fdr = 0.2, data_list = list(x = x, y = y))
+kfold_plainER_steps(k = 3, delta = 0.1, thresh_fdr = 0.2, data_list = list(x = x, y = y))
 
 
