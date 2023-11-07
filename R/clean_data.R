@@ -28,7 +28,7 @@ clean_data = function(xdata, ydata, edit_data = T,
 
     } else {
       # output an error message and return unedited data
-      cat("\n Argument for ", substitute(varname), "= ", varname, " has no matching indices \n")
+      cat("\n Argument for ", substitute(varname), "=", varname, " has no matching indices \n")
     }
     return(data)
   }
@@ -90,6 +90,16 @@ clean_data = function(xdata, ydata, edit_data = T,
       xdata = remove_indices_safely(xdata, low_var_cols, col_var_quantile_filter, col_indices = T)
     }
 
+    if (col_coeffvar_quantile_filter > 0) {
+      col_coeffvar = apply(xdata, 2, function(x) sd(x)/mean(x))
+
+      col_coeffvar_hist = hist(col_coeffvar, plot = F)
+
+      low_col_coeff_vars = which(col_coeffvar > quantile(col_coeffvar_hist$breaks, col_coeffvar_quantile_filter))
+      xdata = remove_indices_safely(xdata, low_col_coeff_vars, col_coeffvar_quantile_filter, col_indices = T)
+    }
+
+
     if (row_sparsity_min_nonzero_quantile > 0) {
       # remove empty rows last
       row_nonzero = apply(xdata, 1, function(x) length(which(x != 0)) / length(x))
@@ -115,6 +125,18 @@ clean_data = function(xdata, ydata, edit_data = T,
                                     row_var_quantile_filter, row_indices = T)
       ydata = remove_indices_safely(ydata, low_var_rows,
                                     row_var_quantile_filter, row_indices = T)
+    }
+
+    if (row_coeffvar_quantile_filter > 0) {
+      row_coeffvar = apply(xdata, 1, function(x) sd(x)/mean(x))
+
+      row_coeffvar_hist = hist(row_coeffvar, plot = F)
+
+      low_row_coeff_vars = which(row_coeffvar > quantile(row_coeffvar_hist$breaks, row_coeffvar_quantile_filter))
+
+      xdata = remove_indices_safely(xdata, low_row_coeff_vars, row_coeffvar_quantile_filter, row_indices = T)
+      ydata = remove_indices_safely(ydata, low_row_coeff_vars, row_coeffvar_quantile_filter, row_indices = T)
+
     }
   }
 
