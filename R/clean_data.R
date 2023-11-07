@@ -2,116 +2,121 @@
 clean_data = function(xdata, ydata, edit_data = T,
                       col_var_quantile_filter = 0,
                       row_var_quantile_filter = 0,
+                      col_coeffvar_quantile_filter = 0,
+                      row_coeffvar_quantile_filter = 0,
                       col_sparsity_min_nonzero_quantile = 0,
                       row_sparsity_min_nonzero_quantile = 0,
                       remove_zero_median_cols = F,
                       remove_zero_median_rows = F,
                       scale_zeroes_directly = 0,
-                      remove_spurious = c("GM42418", "LARS2"),
-                      remove_mito_ribo = F,
-                      er_input = NULL) {
-  
-  mode = ifelse(edit_data == T, 1, 0)
-  
+                      remove_zero_sd_cols = T) {
+
+  remove_indices_safely = function(data, indices, varname,
+                                   row_indices = F, col_indices = F) {
+    if (length(indices) > 0) {
+      # if there are no matching indices, we get indices = integer(0)
+      # and if we use those, like df[, -integer(0)] we remove all columns
+      data = as.matrix(data)
+
+      if (col_indices) {
+        data = data[, -indices]
+      }
+
+      if (row_indices) {
+        data = data[-indices, ]
+      }
+
+    } else {
+      # output an error message and return unedited data
+      cat("\n Argument for ", substitute(varname), "= ", varname, " has no matching indices \n")
+    }
+    return(data)
+  }
+
   y_correct_order <- match(rownames(xdata), rownames(ydata))
-  
+
   # we may not have labeled y values, if not just print a message
   if (any(!is.na(y_correct_order))) {
     ydata <- ydata[y_correct_order]
     # fix ydata rownames
     ydata <- as.matrix(ydata)
     rownames(ydata) <- rownames(xdata)
-    
+
   } else {
-    cat("Y does not have labels. Assuming Y and X have rows in the same order")
+    cat("\n Y does not have labels. Assuming Y and X have rows in the same order \n")
   }
-  
-  if (mode > 0) {
-    
+
+  if (edit_data) {
+
     if (col_sparsity_min_nonzero_quantile == 0 && remove_zero_median_cols == T) {
       col_sparsity_min_nonzero_quantile = 0.5
     }
-    
+
     if (row_sparsity_min_nonzero_quantile == 0 && remove_zero_median_rows == T) {
       row_sparsity_min_nonzero_quantile = 0.5
     }
-    
-    if (remove_mito_ribo) {
-      xdata = JishnuLabTools::remove_mitochondrial_ribosomal_genes(xdata)
-    }
-    
-    
-    if (!is.null(remove_spurious) && length(remove_spurious) > 0) {
-      spurious_cols = which(stringr::str_to_upper(colnames(xdata)) %in% remove_spurious)
-      if (length(spurious_cols) > 0) {
-        xdata = xdata[, -spurious_cols]
-      }
-    }
-    
+
     if (scale_zeroes_directly > 0) {
       x_zeros = which(x == 0)
       x[x_zeros] = scale_zeroes_directly
     }
-    
-    # remove zero SD too
-    zero_sd <- which(apply(xdata, 2, sd) == 0)
-    
-    # check if we need to remove any columns
-    if (length(zero_sd) > 0) {
-      xdata <- xdata[, -zero_sd]
+
+    if (remove_zero_sd_cols) {
+      # remove zero SD too
+      zero_sd <- which(apply(xdata, 2, sd) == 0)
+
+      xdata = remove_indices_safely(xdata, zero_sd, remove_zero_sd_cols, col_indices = T)
     }
-    
+
+
     if (col_sparsity_min_nonzero_quantile > 0) {
-      
+
       col_nonzero = apply(xdata, 2, function(x) length(which(x != 0)) / length(x))
-      
-      col_nonzero_hist = hist(col_nonzero)
+
+      col_nonzero_hist = hist(col_nonzero, plot = F)
       col_nonzero_remove = which(col_nonzero > quantile(col_nonzero_hist$breaks, col_sparsity_min_nonzero_quantile))
-      if ( length(col_nonzero_remove) > 0 ) {
-        xdata = xdata[, col_nonzero_remove]
-      }
+
+      xdata = remove_indices_safely(xdata, col_nonzero_remove,
+                                    col_sparsity_min_nonzero_quantile, col_indices = T)
     }
-    
+
+
     if (col_var_quantile_filter > 0) {
       # filter column variance quantile
       colvars <- apply(xdata, 2, var)
-      
+
       low_var_cols <- which(colvars < quantile(colvars, col_var_quantile_filter))
-      
-      if (length(low_var_cols > 0)) {
-        xdata <- xdata[, -low_var_cols]
-      }
+
+      xdata = remove_indices_safely(xdata, low_var_cols, col_var_quantile_filter, col_indices = T)
     }
-    
+
     if (row_sparsity_min_nonzero_quantile > 0) {
       # remove empty rows last
       row_nonzero = apply(xdata, 1, function(x) length(which(x != 0)) / length(x))
-      
+
       # use quantile of histogram bins
-      row_nonzero_hist = hist(row_nonzero)
+      row_nonzero_hist = hist(row_nonzero, plot = F)
       row_nonzero_remove = which(row_nonzero > quantile(row_nonzero_hist$breaks, row_sparsity_min_nonzero_quantile))
-      
+
       # check if we need to remove any rows
-      if (length(row_nonzero_remove) > 0) {
-        # remove rows
-        xdata <- xdata[row_nonzero_remove,]
-        ydata <- ydata[row_nonzero_remove]
-      }
+      xdata = remove_indices_safely(xdata, row_nonzero_remove,
+                                    row_sparsity_min_nonzero_quantile, row_indices = T)
+      ydata = remove_indices_safely(ydata, row_nonzero_remove,
+                                    row_sparsity_min_nonzero_quantile, row_indices = T)
     }
-    
+
     if (row_var_quantile_filter) {
       # remove empty rows last
       rowvars <- apply(xdata, 1, var)
       low_var_rows <- which(rowvars < quantile(rowvars, row_var_quantile_filter))
-      
+
       # check if we need to remove any rows
-      if (length(low_var_rows) > 0) {
-        # remove rows
-        xdata <- xdata[-low_var_rows,]
-        ydata <- ydata[-low_var_rows]
-      }
+      xdata = remove_indices_safely(xdata, low_var_rows,
+                                    row_var_quantile_filter, row_indices = T)
+      ydata = remove_indices_safely(ydata, low_var_rows,
+                                    row_var_quantile_filter, row_indices = T)
     }
   }
-  
+
   return(list("x" = xdata, "y" = ydata))
 }

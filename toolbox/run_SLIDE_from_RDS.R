@@ -32,7 +32,7 @@ run_SLIDE_from_RDS(data_frame_path = NULL,
                    output_path = NULL,
                    lambdas = c(0.1, 1.0),
                    deltas = c(0.1, 0.01),
-                   k = 10, y_factor = TRUE, y_levels = c(0, 1),
+                   k = -1, y_factor = TRUE, y_levels = c(0, 1),
                    eval_type = "cor", rep_cv = 25, n_reps = 25,
                    alpha_level = 0.05, thresh_fdr = 0.2,
                    permute = TRUE,
@@ -243,8 +243,8 @@ run_SLIDE_from_RDS(data_frame_path = NULL,
   yaml_path = paste0(yaml_args$out_path, "yaml_input.yaml")
   yaml::write_yaml(yaml_args, yaml_path)
 
-  if (yaml_args$k != 10) {
-    # don't do anything if our is k is the default
+  if (yaml_args$k == -1) {
+    # determine a good K
     if (nrow(x) < 20) {
       yaml_args$k = nrow(x)
     } else if (nrow(x) < 50) {
