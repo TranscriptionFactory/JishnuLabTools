@@ -43,25 +43,27 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
 
     coeff_var_partition_to_sample_from = which(col_coeff_var > lower_quantile & col_coeff_var < upper_quantile)
 
-    if (length(coeff_var_partition_to_sample_from) < floor(nrow(sorted_x)/k)) {
+    # if (length(coeff_var_partition_to_sample_from) < floor(nrow(sorted_x)/k)) {
+    #
+    #   additional_num_to_sample = floor(nrow(sorted_x)/k) - length(coeff_var_partition_to_sample_from)
+    #   additional_sample_inds = sample(which(!1:nrow(sorted_x) %in% coeff_var_partition_to_sample_from),
+    #                                   additional_num_to_sample)
+    #
+    #   coeff_var_partition_to_sample_from = c(coeff_var_partition_to_sample_from, additional_sample_inds)
+    # } else if (length(coeff_var_partition_to_sample_from) > floor(nrow(sorted_x)/k)) {
+    #   # remove some indices
+    #
+    #   remove_num_sample_inds = length(coeff_var_partition_to_sample_from) - floor(nrow(sorted_x)/k)
+    #
+    #   coeff_var_partition_to_sample_from = coeff_var_partition_to_sample_from[-sample(1:length(coeff_var_partition_to_sample_from),
+    #                                                                                   remove_num_sample_inds)]
+    # }
 
-      additional_num_to_sample = floor(nrow(sorted_x)/k) - length(coeff_var_partition_to_sample_from)
-      additional_sample_inds = sample(which(!1:nrow(sorted_x) %in% coeff_var_partition_to_sample_from),
-                                      additional_num_to_sample)
-
-      coeff_var_partition_to_sample_from = c(coeff_var_partition_to_sample_from, additional_sample_inds)
-    } else if (length(coeff_var_partition_to_sample_from) > floor(nrow(sorted_x)/k)) {
-      # remove some indices
-
-      remove_num_sample_inds = length(coeff_var_partition_to_sample_from) - floor(nrow(sorted_x)/k)
-
-      coeff_var_partition_to_sample_from = coeff_var_partition_to_sample_from[-sample(1:length(coeff_var_partition_to_sample_from),
-                                                                                      remove_num_sample_inds)]
-    }
+    rowinds = sample(1:nrow(sorted_x), floor(nrow(sorted_x)/k))
 
     sinds = sample(coeff_var_partition_to_sample_from)
-    x = sorted_x[sinds, ]
-    y = true_y[sinds]
+    x = sorted_x[rowinds, sinds]
+    y = true_y[rowinds]
 
     n <- nrow(x);  p <- ncol(x) #### feature matrix dimensions
 
