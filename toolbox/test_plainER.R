@@ -3,7 +3,7 @@ library(ggpubr)
 test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr, coeff_var_partitions = 3) {
   # sampling
 
-  cat("\n ********************************************************* \n")
+  cat("\n ******************************************************************************** \n")
   in_args = as.list(match.call())
   cat("\n using params delta =", delta, " k =", k, " thresh_fdr =", thresh_fdr, "\n")
 
@@ -16,7 +16,6 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
     y = as.matrix(data_list[[2]])
   }
 
-  cat("\n ******************************************************************************** \n")
   cat("\n Splitting data into low, medium and high coeff. var groups to sample from \n")
 
   col_coeff_var = apply(x, 2, function(x) sd(x)/mean(x))
@@ -31,6 +30,8 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
 
   partition_results = data.frame()
   partitions = seq(0, 1, 1/coeff_var_partitions)
+
+  rowinds = sample(1:nrow(sorted_x), floor(nrow(sorted_x)/k))
 
   partition_name = c("Low", "Medium", "High")
   for (partition_index in 1:(length(partitions)-1)) {
@@ -59,8 +60,6 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
     #                                                                                   remove_num_sample_inds)]
     # }
 
-    rowinds = sample(1:nrow(sorted_x), floor(nrow(sorted_x)/k))
-
     sinds = sample(coeff_var_partition_to_sample_from)
     x = sorted_x[rowinds, sinds]
     y = true_y[rowinds]
@@ -88,10 +87,10 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
 
     if ( nrow(result_AI$AI) - length(result_AI$pure_vec) != ncol(sigma[, -result_AI$pure_vec]) ){
       partition_result = "Failed"
-      cat("\n \t\t\t Partition ", partition_index, " Failed  \n")
+      cat("\n \t\t\t Partition ", partition_index, " (", partition_name[partition_index], "Coeff Columns) Failed  \n")
     } else {
       partition_result = "Passed"
-      cat("\n \t\t\t Partition ", partition_index, " Passed \n")
+      cat("\n \t\t\t Partition ", partition_index, " (", partition_name[partition_index], "Coeff Columns) Passed  \n")
     }
 
     partition_results = rbind.data.frame(partition_results,
@@ -153,10 +152,14 @@ kfold_plainER_steps = function(k, delta,...) {
   return(res)
 }
 
-
+# delta = c(0.01, 0.05, 0.1)
 res = kfold_plainER_steps(k = 5, delta = c(0.01, 0.05, 0.1), thresh_fdr = 0.2, data_list = list(x = x, y = y))
 
 ggpubr::ggdotchart(data = res, x = "k", y = "partition", color = "partition_result", size = 5, facet.by = "delta", nrow = 3,
                    xlab = "Fold Size (k); data split into nrow(x)/k", ylab = "Coeff. Var Partition (3 Percentiles)") + ggpubr::rotate_x_text(angle = 0)
 # ggpubr::ggdotchart(data = res, x = "k", y = "partition", color = "partition_result", size = 5,
 #                    xlab = "Fold Size (k); data split into nrow(x)/k", ylab = "Coeff. Var Partition (3 Percentiles)") + ggpubr::rotate_x_text(angle = 0)
+
+
+# ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/oliver_data.png', height = 5, width = 5)
+
