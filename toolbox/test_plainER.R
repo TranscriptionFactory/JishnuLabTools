@@ -1,7 +1,7 @@
 library(ggpubr)
 
 test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr,
-                        coeff_var_partitions = 3, row_samples = 3, partition_random_sample_percent = 0.5) {
+                        coeff_var_partitions = 3, row_samples = 3, partition_random_sample_percent = 0.1) {
   # sampling
 
   cat("\n ******************************************************************************** \n")
@@ -48,7 +48,6 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
         coeff_var_partition_to_sample_from = which(col_coeff_var > lower_quantile & col_coeff_var < upper_quantile)
 
         # take 25% out of this and replace with random from rest of df
-
         coeff_var_partition_to_sample_from = coeff_var_partition_to_sample_from[-sample(coeff_var_partition_to_sample_from,
                                                                                         floor(length(coeff_var_partition_to_sample_from) * partition_random_sample_percent))]
 
@@ -123,21 +122,12 @@ test_plainER = function(path_list = NULL, data_list = NULL, delta, k, thresh_fdr
       cat("\n Completed \n")
     }
   }
+
+  partition_results$partition_random_sample_percent = partition_random_sample_percent
   return(partition_results)
 }
 
 
-
-
-
-
-# kfold_plainER_steps = function(k, ...) {
-#   cpu_times = list()
-#   for (i in 1:k) {
-#     cpu_times[[k]] = withCallingHandlers(system.time(test_plainER(k = i, ...)), error = function(e){ print(sys.calls())})
-#   }
-#   return(cpu_times)
-# }
 kfold_plainER_steps = function(k, delta,...) {
   res = data.frame()
   for (i in 1:k) {
@@ -148,14 +138,16 @@ kfold_plainER_steps = function(k, delta,...) {
   return(res)
 }
 
-# delta = c(0.01, 0.05, 0.1)
-res = kfold_plainER_steps(k = 5, delta = c(0.01, 0.05, 0.1), thresh_fdr = 0.2, data_list = list(x = x, y = y))
+deltas = c(0.01, 0.05, 0.1, 0.2)
+res = kfold_plainER_steps(k = 5, delta = deltas, thresh_fdr = 0.2, data_list = list(x = x, y = y))
 
-ggpubr::ggdotchart(data = res, x = "k", y = "partition", color = "partition_result", size = 5, facet.by = "delta", nrow = 3,
-                   xlab = "Fold Size (k); data split into nrow(x)/k", ylab = "Coeff. Var Partition (3 Percentiles)") + ggpubr::rotate_x_text(angle = 0)
-# ggpubr::ggdotchart(data = res, x = "k", y = "partition", color = "partition_result", size = 5,
-#                    xlab = "Fold Size (k); data split into nrow(x)/k", ylab = "Coeff. Var Partition (3 Percentiles)") + ggpubr::rotate_x_text(angle = 0)
+res$partition = factor(res$partition, levels = c("Low", "Medium", "High", "From All"))
+res_summary = res %>% group_by(k, partition, delta) %>% summarise(replicates_passed = length(which(partition_result == "Passed")))
+
+ggpubr::ggdotchart(data = res_summary, x = "k", y = "partition", color = "replicates_passed", size = 3, facet.by = "delta", nrow = length(deltas),
+                     xlab = "Fold Size (k); data split into nrow(x)/k", ylab = "Coeff. Var Partition (3 Percentiles)") +
+  ggpubr::rotate_x_text(angle = 0) + gradient_color(c("red", "white", "blue"))
 
 
-ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/IM_highvar_data.png', height = 5, width = 5)
+ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/IM_highvar_data.png', height = 2.5*length(deltas), width = 6)
 
