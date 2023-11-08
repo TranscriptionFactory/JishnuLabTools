@@ -1,10 +1,14 @@
+library(tidyverse)
+library(ggpubr)
+library(caret)
+
 # code from test plainER with coeff partitions removed changed to look at delta/lambda
-test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda, k, thresh_fdr,row_samples = 3) {
+test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda, k, thresh_fdr, row_samples = 3) {
   # sampling
 
   cat("\n ******************************************************************************** \n")
   in_args = as.list(match.call())
-  cat("\n using params delta =", delta, " k =", k, " thresh_fdr =", thresh_fdr, "\n")
+  cat("\n using params delta =", delta, "lambda =", lambda, "k =", k, "thresh_fdr =", thresh_fdr, "\n")
 
   if ( !is.null(path_list) ) {
     x = as.matrix(read.csv(path_list[[1]], row.names = 1))
@@ -20,14 +24,13 @@ test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda
   full_y = y
 
   replicate_results = data.frame()
+  cat("\n ******************** Starting Replicates ******************** \n")
 
   for (row_sample_rep in 1:row_samples) {
     # for now, we just pick random sample of rows to use
-    group_inds <- caret::createFolds(factor(y), k = k, list = TRUE, returnTrain = F)
+    group_inds <- caret::createFolds(factor(y), k = k, list = TRUE, returnTrain = T)
 
     rowinds = group_inds[[1]] #sample(1:nrow(sorted_x), floor(nrow(sorted_x)/k))
-
-    cat("\n ******************** Starting delta=", delta, "lambda=", lambda, " Replicate ", row_sample_rep, " of ", row_samples, " ******************** \n")
 
     x = full_x[rowinds, ]
 
@@ -55,10 +58,10 @@ test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda
 
     if ( nrow(result_AI$AI) - length(result_AI$pure_vec) != ncol(sigma[, -result_AI$pure_vec]) ){
       replicate_result = "Failed"
-      cat("\n \t\t\t delta=", delta, "lambda=", lambda, " Replicate ", row_sample_rep, " Failed  \n")
+      cat("\n \t\t Replicate", row_sample_rep, "of", row_samples, "Failed  \n")
     } else {
       replicate_result = "Passed"
-      cat("\n \t\t\t delta=", delta, "lambda=", lambda, " Replicate ", row_sample_rep, " Passed  \n")
+      cat("\n \t\t Replicate", row_sample_rep, "of", row_samples, "Passed  \n")
     }
 
     replicate_results = rbind.data.frame(replicate_results,

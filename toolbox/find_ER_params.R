@@ -1,12 +1,14 @@
+#!/usr/bin/env Rscript
 
+library(tidyverse)
 library(ggpubr)
 library(caret)
 
 # code from test plainER with coeff partitions removed changed to look at delta/lambda
-test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda, k, thresh_fdr,row_samples = 3) {
+test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda, k, thresh_fdr, row_samples = 3) {
   # sampling
 
-  cat("\n ******************************************************************************** \n")
+  cat("\n ********************************************************************************")
   in_args = as.list(match.call())
   cat("\n using params delta =", delta, "lambda =", lambda, "k =", k, "thresh_fdr =", thresh_fdr, "\n")
 
@@ -24,14 +26,13 @@ test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda
   full_y = y
 
   replicate_results = data.frame()
+  cat("\n ******************** Starting Replicates ******************** \n")
 
   for (row_sample_rep in 1:row_samples) {
     # for now, we just pick random sample of rows to use
-    group_inds <- caret::createFolds(factor(y), k = k, list = TRUE, returnTrain = F)
+    group_inds <- caret::createFolds(factor(y), k = k, list = TRUE, returnTrain = T)
 
-    rowinds = group_inds[[1]] #sample(1:nrow(sorted_x), floor(nrow(sorted_x)/k))
-
-    cat("\n ******************** Starting delta=", delta, "lambda=", lambda, " Replicate ", row_sample_rep, " of ", row_samples, " ******************** \n")
+    rowinds = group_inds[[sample(k)[1]]] #sample(1:nrow(sorted_x), floor(nrow(sorted_x)/k))
 
     x = full_x[rowinds, ]
 
@@ -59,10 +60,10 @@ test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda
 
     if ( nrow(result_AI$AI) - length(result_AI$pure_vec) != ncol(sigma[, -result_AI$pure_vec]) ){
       replicate_result = "Failed"
-      cat("\n \t\t\t delta=", delta, "lambda=", lambda, " Replicate ", row_sample_rep, " Failed  \n")
+      cat("\n \t\t Replicate", row_sample_rep, "of", row_samples, "Failed  \n")
     } else {
       replicate_result = "Passed"
-      cat("\n \t\t\t delta=", delta, "lambda=", lambda, " Replicate ", row_sample_rep, " Passed  \n")
+      cat("\n \t\t Replicate", row_sample_rep, "of", row_samples, "Passed  \n")
     }
 
     replicate_results = rbind.data.frame(replicate_results,
@@ -72,33 +73,6 @@ test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda
                                               row_sample_replicate = row_sample_rep))
 
     next()
-
-    # C_hat <- EssReg::estC(sigma = sigma, AI = A_hat)
-    #
-    # Gamma_hat <- rep(0, p)
-    # Gamma_hat[I_hat] <- diag(sigma[I_hat, I_hat]) - diag(A_hat[I_hat, ] %*% C_hat %*% t(A_hat[I_hat, ]))
-    # Gamma_hat[Gamma_hat < 0] <- 1e-2 #### replace negative values with something very close to 0
-    #
-    #
-    # pred_result <- EssReg::prediction(y = y, x = x, sigma = sigma, A_hat = A_hat,
-    #                                   Gamma_hat = Gamma_hat, I_hat = I_hat)
-    #
-    # #### theta_hat (supplement 2.2)
-    # theta_hat <- pred_result$theta_hat
-    # #### Inference In Latent Factor Regression With Clusterable Features
-    # #### Z_tilde = Q*X
-    #
-    # Q <- try(theta_hat %*% solve(crossprod(x %*% theta_hat) / n, crossprod(theta_hat)), silent = T)
-    # if (class(Q)[1] == "try-error") {
-    #   Q <- theta_hat %*% MASS::ginv(crossprod(x %*% theta_hat) / n) %*% crossprod(theta_hat)
-    # }
-    #
-    #
-    #
-    # if (length(result_AI$pure_vec) != nrow(sigma)) { ## check if all vars are pure vars?
-    #   sigma_TJ <- EssReg::estSigmaTJ(sigma = sigma, AI = A_hat, pure_vec = result_AI$pure_vec)
-    # }
-    # cat("\n Completed \n")
   }
 
   return(replicate_results)
@@ -106,31 +80,33 @@ test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda
 
 
 
-find_plainER_params = function(deltas, lambdas, kfolds...) {
+find_plainER_params = function(deltas, lambdas, kfolds, ...) {
   res = data.frame()
+  total_runs = length(deltas) * length(lambdas) * length(kfolds)
   for (d in deltas) {
     for (l in lambdas) {
       for (k in kfolds) {
+        cat("\n runs remaining =", total_runs)
         res = rbind.data.frame(res, test_plainER_params(delta = d, lambda = l, k = k, ...))
+        total_runs = total_runs - 1
       }
     }
   }
   res_summary = res %>% group_by(delta, lambda, k) %>% summarise(replicates_passed = length(which(replicate_result == "Passed")))
 
-  pl = ggpubr::ggdotchart(data = res_summary, x = "delta", y = "lambda", color = "replicates_passed", size = 4, facet.by = "k", nrow = length(kfolds),
-                          xlab = "Fold Size (k); data split into nrow(x)/k", ylab = "Coeff. Var Partition (3 Percentiles)") +
-    ggpubr::rotate_x_text(angle = 0) + gradient_color(c("red", "white", "blue"))
+  res_summary$lambda = factor(res_summary$lambda)
+  res_summary$delta = factor(res_summary$delta)
+  # res_summary$replicates_passed = factor(res_summary$replicates_passed)
+
+  kfold_label = paste0("k = ", res_summary$k)
+  pl = ggpubr::ggdotchart(data = res_summary, x = "delta", y = "lambda", color = "replicates_passed", size = 6, facet.by = "k", nrow = length(kfolds),
+                          panel.labs = list(k = unique(kfold_label)),
+                          xlab = "Delta", ylab = "Lambda") +
+    ggpubr::rotate_x_text(angle = 0) + ggplot2::scale_color_gradientn(colors = c("white", "red", "purple", "blue"), n.breaks = 3, limits = c(0,NA))
 
   return(list(pl = pl, res = res, res_summary = res_summary))
 }
 
 deltas = c(0.01, 0.05, 0.1, 0.2)
 lambdas = c(1.0, 0.1)
-
-res_list = find_plainER_params(deltas = deltas, lambas = lambdas, kfolds = 5, thresh_fdr = 0.2, data_list = list(x = x, y = y))
-
-
-
-
-# ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/IM_highvar_data.png', height = 1.75*length(deltas), width = 6)
-
+kfolds = c(5, 10)
