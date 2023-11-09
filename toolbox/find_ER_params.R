@@ -110,3 +110,14 @@ find_plainER_params = function(deltas, lambdas, kfolds, ...) {
 deltas = c(0.01, 0.05, 0.1, 0.2)
 lambdas = c(1.0, 0.1)
 kfolds = c(5, 10)
+x = as.matrix(read.csv('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/counts_MIvsSham_correlation_filter_scaled_x.csv', row.names = 1))
+y = as.matrix(read.csv('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/sampleInfo_MIvsSham_y.csv', row.names = 1))
+
+res_list = find_plainER_params(deltas = deltas, lambdas = lambdas, kfolds = kfolds, thresh_fdr = 0.2, data_list = list(x = x, y = y))
+
+
+
+
+ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/IM_orig_data.png', height = 2*length(kfolds), width = 4, plot = res_list$pl)
+
+
