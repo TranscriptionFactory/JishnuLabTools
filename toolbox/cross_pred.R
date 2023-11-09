@@ -186,8 +186,9 @@ perf_ggplot = function(orig_perf, new_perf, title = NULL,
   return(pl)
 }
 
-cross_predict_loader = function(orig_run_path, new_run_path,
-                                load_slide = T, out_path = NULL,
+cross_predict_loader = function(orig_yaml_path = NULL, new_yaml_path = NULL,
+                                orig_run_path = NULL, new_run_path = NULL,
+                                SLIDE_res = NULL, out_path = NULL,
                                 orig_new_name = NULL) {
 
 
@@ -203,10 +204,39 @@ cross_predict_loader = function(orig_run_path, new_run_path,
 
 
   # load original ER results, X, Y, and Z
-  orig_er = readRDS(list.files(orig_run_path, full.names = T, pattern = "final_"))
-  orig_z = read.csv(paste0(orig_run_path, "/z_mat.csv"), row.names = 1)
-  orig_x = read.csv(paste0(orig_run_path, "/x.csv"), row.names = 1)
-  orig_y = read.csv(paste0(orig_run_path, "/y.csv"), row.names = 1)
+  if (all(!is.null(orig_run_path) & !is.null(new_run_path)) | all(!is.null(orig_yaml_path) & !is.null(new_yaml_path))) {
+    cat("\n Use either two yaml paths or two paths to folders with (original ER results, orig x.csv, orig y.csv, orig z_mat.csv 
+        in one folder and new x.csv and new y.csv in another")
+    return()
+  }
+
+  if (all(!is.null(orig_run_path) & !is.null(new_run_path)) ){
+    orig_er = readRDS(list.files(orig_run_path, full.names = T, pattern = "final_"))
+    orig_z = read.csv(paste0(orig_run_path, "/z_mat.csv"), row.names = 1)
+    orig_x = read.csv(paste0(orig_run_path, "/x.csv"), row.names = 1)
+    orig_y = read.csv(paste0(orig_run_path, "/y.csv"), row.names = 1)
+
+
+    new_x = read.csv(paste0(new_run_path, "/x.csv"), row.names = 1)
+    new_y = read.csv(paste0(new_run_path, "/y.csv"), row.names = 1)
+  } else if (all(!is.null(orig_yaml_path) & !is.null(new_yaml_path))) {
+
+    orig_yaml_args = yaml::yaml.load_file(orig_yaml_path)
+    orig_er = readRDS(list.files(orig_yaml_args$out_path, full.names = T, pattern = "final_"))
+    orig_z = read.csv(list.files(orig_yaml_args$out_path, full.names = T, pattern = "z_mat.csv"), row.names = 1)
+    orig_x = read.csv(orig_yaml_args$out_path$x_path, row.names = 1)
+    orig_y = read.csv(paste0(orig_yaml_args$y_path, row.names = 1)
+
+    new_yaml_args = yaml::yaml.load_file(new_yaml_path)
+    new_x = read.csv(new_yaml_args$x_path, row.names = 1)
+    new_y = read.csv(new_yaml_args$y_path, row.names = 1)
+    
+                      
+    orig_run_path = orig_yaml_args$out_path
+    new_run_path = new_yaml_args$out_path
+
+  }
+
 
 
   is_classification = ifelse(length(unique(orig_y[, 1])) == 2, T, F)
@@ -215,19 +245,22 @@ cross_predict_loader = function(orig_run_path, new_run_path,
                       "Generalizing LFs: Corr for ")
 
   # load SLIDE results if we want to cross predict using only significant LFs
-  if (load_slide) {
-    slide_res = readRDS(paste0(orig_run_path, "/slide_res.RDS"))
-
+  if (!is.null(SLIDE_res)) {
+    slide_res = SLIDE_res
     plot_title = paste0(plot_title, "SLIDE\n")
   } else {
     slide_res = NULL
     plot_title = paste0(plot_title, "ER\n")
-
   }
 
   # load new X, Y
-  new_x = read.csv(paste0(new_run_path, "/x.csv"), row.names = 1)
-  new_y = read.csv(paste0(new_run_path, "/y.csv"), row.names = 1)
+  if (!is.null(new_yaml_path)) {
+    
+
+  } else {
+
+
+  }
 
   # make sure y's are properly ordered before doing prediction
   orig_y = data.frame(reorder_y_to_xrows(orig_x, orig_y))
