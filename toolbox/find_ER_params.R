@@ -1,8 +1,30 @@
 #!/usr/bin/env Rscript
-
 library(tidyverse)
 library(ggpubr)
 library(caret)
+
+###################################################
+# path to yaml file (to load x and y, or just change below
+###################################################
+yaml_path = ''
+yaml_args = yaml::yaml.load_file(yaml_path)
+
+x = as.matrix(read.csv(yaml_args$x_path, row.names = 1, check.names = F))
+y = as.matrix(read.csv(yaml_args$y_path, row.names = 1))
+
+###################################################
+# deltas and lambdas to test (bad parameters will cause the clustering to fail)
+###################################################
+deltas = c(0.01, 0.05, 0.1, 0.2)
+lambdas = c(1.0, 0.1)
+
+
+
+###################################################
+# k-folds to test (remove nrow(x) for large n)
+###################################################
+kfolds = c(5, 10, nrow(x))
+
 
 # code from test plainER with coeff partitions removed changed to look at delta/lambda
 test_plainER_params = function(path_list = NULL, data_list = NULL, delta, lambda, k, thresh_fdr, row_samples = 3) {
@@ -107,11 +129,8 @@ find_plainER_params = function(deltas, lambdas, kfolds, ...) {
   return(list(pl = pl, res = res, res_summary = res_summary))
 }
 
-deltas = c(0.01, 0.05, 0.1, 0.2)
-lambdas = c(1.0, 0.1)
-kfolds = c(5, 10)
-x = as.matrix(read.csv('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/counts_MIvsSham_correlation_filter_scaled_x.csv', row.names = 1))
-y = as.matrix(read.csv('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/sampleInfo_MIvsSham_y.csv', row.names = 1))
+
+
 
 res_list = find_plainER_params(deltas = deltas, lambdas = lambdas, kfolds = kfolds, thresh_fdr = 0.2, data_list = list(x = x, y = y))
 
@@ -119,5 +138,4 @@ res_list = find_plainER_params(deltas = deltas, lambdas = lambdas, kfolds = kfol
 
 
 ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/IM_orig_data.png', height = 2*length(kfolds), width = 4, plot = res_list$pl)
-
 
