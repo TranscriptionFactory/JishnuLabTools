@@ -4,6 +4,12 @@ library(ggpubr)
 library(caret)
 
 ###################################################
+# OUTPUT PATH for png
+###################################################
+out_path = ''
+
+
+###################################################
 # path to yaml file (to load x and y, or just change below
 ###################################################
 yaml_path = ''
@@ -18,12 +24,19 @@ y = as.matrix(read.csv(yaml_args$y_path, row.names = 1))
 deltas = c(0.01, 0.05, 0.1, 0.2)
 lambdas = c(1.0, 0.1)
 
-
+thresh_fdr = 0.2
 
 ###################################################
 # k-folds to test (remove nrow(x) for large n)
 ###################################################
 kfolds = c(5, 10, nrow(x))
+
+
+
+# thats it :), just run this file on the cluster
+######################################################################################################
+
+
 
 
 # code from test plainER with coeff partitions removed changed to look at delta/lambda
@@ -132,10 +145,8 @@ find_plainER_params = function(deltas, lambdas, kfolds, ...) {
 
 
 
-res_list = find_plainER_params(deltas = deltas, lambdas = lambdas, kfolds = kfolds, thresh_fdr = 0.2, data_list = list(x = x, y = y))
+res_list = find_plainER_params(deltas = deltas, lambdas = lambdas, kfolds = kfolds, thresh_fdr = thresh_fdr, data_list = list(x = x, y = y))
 
 
-
-
-ggsave('/ix/djishnu/Aaron/0_for_others/Isha_ER_data/IM_orig_data.png', height = 2*length(kfolds), width = 4, plot = res_list$pl)
+ggsave(paste0(out_path, "/ER_param_test.png"), height = 2*length(kfolds), width = 4, plot = res_list$pl)
 
