@@ -1,12 +1,18 @@
 #!/usr/bin/env Rscript
+# command line usage: Rscript this_script.R yaml_path
 args = commandArgs(trailingOnly=TRUE)
 
-library(SLIDEHelper)
+library(SLIDEHelper) # download with devtools::install_github("Hanxi-002/SLIDEHelper", force = FALSE, dependencies = TRUE)
 library(tidyverse)
 library(doParallel)
 
-yaml_path = args[1]
+yaml_path = args[1] #hardcode this if you don't want to run this script from the command line
 
+# set up parallel cores for SLIDE
+cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
+if(is.na(cores)) cores <- detectCores()
+registerDoParallel(cores)
+cat('number of cores using', cores, '. . .\n')
 
 runSLIDEHelper_fromYamlpath = function(yaml_path, num_top_feats = 10, spec = 0.1, niter = 1000, do_interacts = TRUE) {
 
