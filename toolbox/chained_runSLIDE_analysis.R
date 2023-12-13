@@ -8,7 +8,7 @@ library(doParallel)
 yaml_path = args[1]
 
 
-runSLIDEHelper_fromYamlpath = function(yaml_path) {
+runSLIDEHelper_fromYamlpath = function(yaml_path, num_top_feats = 10, spec = 0.1, niter = 1000, do_interacts = TRUE) {
 
   yaml_input = yaml::yaml.load_file(yaml_path)
 
@@ -33,23 +33,22 @@ runSLIDEHelper_fromYamlpath = function(yaml_path) {
   z_path =  paste0(er_path, "/z_mat.csv")
   write.csv(z_mat, z_path)
 
-  SLIDE_res <- runSLIDE(y_path = y_path,
+  SLIDE_res <- SLIDEHelper::runSLIDE(y_path = y_path,
                         z_path = z_path,
                         er_path = er_results_path,
-                        do_interacts = TRUE,
-                        spec = 0.1,
-                        niter = 1000)
+                        do_interacts = do_interacts,
+                        spec = spec,
+                        niter = niter)
 
-  num_top_feats <- 10
-  condition <- "auc"
+  condition <- yaml_input$eval_type
   SLIDE_res <- SLIDEHelper::GetTopFeatures(x_path, y_path, er_results_path, out_path = er_path, SLIDE_res, num_top_feats = 10, condition)
 
   saveRDS(SLIDE_res, paste0(er_path, "/SLIDE_res.RDS"))
 
-  plotSigGenes(SLIDE_res, out_path = er_path, plot_interaction = TRUE)
+  SLIDEHelper::plotSigGenes(SLIDE_res, out_path = er_path, plot_interaction = TRUE)
 
   #the SLIDE_res has to be the output from GetTopFeatures
-  CalcControlPerformance(z_matrix = z_mat, y_path, SLIDE_res, niter = 1000, condition, out_path = er_path)
+  SLIDEHelper::CalcControlPerformance(z_matrix = z_mat, y_path, SLIDE_res, niter = 1000, condition, out_path = er_path)
 
 }
 
@@ -61,9 +60,15 @@ create_corr_network = function(x, y, out_dir, plot_name, sig_genes) {
 
   x_gene = as.matrix(x[, sig_genes])
 
-  col_auc = round(apply(x_gene, 2, function(xs) glmnet:::auc(as.matrix(y), as.matrix(xs))), 2)
+  if (length(unique(y)) == 2) {
+    col_auc = round(apply(x_gene, 2, function(xs) glmnet:::auc(as.matrix(y), as.matrix(xs))), 2)
 
-  temp_cols = ifelse(col_auc > 0.55, "#40006D", ifelse(col_auc < 0.45, "#59A14F", "lightgray"))
+    temp_cols = ifelse(col_auc > 0.55, "#40006D", ifelse(col_auc < 0.45, "#59A14F", "lightgray"))
+  } else {
+    col_cor = round(apply(x_gene, 2, function(xs) glmnet:::auc(as.matrix(y), as.matrix(xs))), 2)
+
+    temp_cols = ifelse(col_cor > 0, "#40006D", ifelse(col_cor < 0, "#59A14F", "lightgray"))
+  }
 
   x_temp = cor(x_gene)
 
