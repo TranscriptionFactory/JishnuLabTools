@@ -6,6 +6,7 @@ library(SLIDEHelper) # download with devtools::install_github("Hanxi-002/SLIDEHe
 library(tidyverse)
 library(doParallel)
 
+# this should point to a directory that has 
 yaml_path = args[1] #hardcode this if you don't want to run this script from the command line
 
 # set up parallel cores for SLIDE
@@ -13,6 +14,10 @@ cores <-  as.numeric(Sys.getenv('SLURM_CPUS_PER_TASK', unset=NA))
 if(is.na(cores)) cores <- detectCores()
 registerDoParallel(cores)
 cat('number of cores using', cores, '. . .\n')
+
+# run ER first
+EssReg::pipelineER3(yaml_path)
+
 
 runSLIDEHelper_fromYamlpath = function(yaml_path, num_top_feats = 10, spec = 0.1, niter = 1000, do_interacts = TRUE) {
 
