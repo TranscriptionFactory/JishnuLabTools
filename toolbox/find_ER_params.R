@@ -6,10 +6,6 @@ library(tidyverse)
 library(ggpubr)
 library(caret)
 
-###################################################
-# OUTPUT PATH for png
-###################################################
-
 
 ###################################################
 # path to yaml file (to load x and y, or just change below
@@ -18,6 +14,9 @@ yaml_path = args[1]
 yaml_args = yaml::yaml.load_file(yaml_path)
 
 
+###################################################
+# OUTPUT PATH for png
+###################################################
 out_path = yaml_args$out_path
 
 x = as.matrix(read.csv(yaml_args$x_path, row.names = 1, check.names = F))
